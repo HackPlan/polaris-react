@@ -15,9 +15,14 @@ Use [the changelog guidelines](https://git.io/polaris-changelog-guidelines) to f
 
 ### Enhancements
 
+- Improved utility functions in Sass to support more accurate conversion of relative units ([#1590](https://github.com/Shopify/polaris-react/pull/1590))
+
 ### Design updates
 
 ### Bug fixes
+
+- Fixed a bug that affected sizing and spacing of elements in some writing systems (notably Chinese, Japanese, and Korean) ([#1590](https://github.com/Shopify/polaris-react/pull/1590))
+- Fixed a bug when converting `em` units to `rem` units ([#1590](https://github.com/Shopify/polaris-react/pull/1590))
 
 ### Documentation
 
