@@ -1,11 +1,9 @@
-import React from 'react';
-import {classNames} from '@shopify/css-utilities';
+import React, {useState, useRef, useEffect, useCallback} from 'react';
 import {
   addEventListener,
   removeEventListener,
 } from '@shopify/javascript-utilities/events';
-import {read} from '@shopify/javascript-utilities/fastdom';
-import {withAppProvider, WithAppProviderProps} from '../AppProvider';
+import {classNames} from '@shopify/css-utilities';
 
 import styles from './Collapsible.scss';
 
@@ -18,143 +16,144 @@ export interface Props {
   children?: React.ReactNode;
 }
 
-export type CombinedProps = Props & WithAppProviderProps;
-
-export type AnimationState =
-  | 'idle'
-  | 'measuring'
-  | 'closingStart'
-  | 'closing'
-  | 'openingStart'
-  | 'opening';
-
 export interface State {
   height?: number | null;
-  animationState: AnimationState;
 }
 
-export class Collapsible extends React.Component<CombinedProps, State> {
-  state: State = {
-    height: null,
-    animationState: 'idle',
+export function Collapsible({id, open, children}: Props) {
+  const [height, setHeight] = useState<number>(0);
+
+  const containerNode = useRef<HTMLDivElement>(null);
+  const contentNode = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!contentNode.current) return;
+    console.log('Called once');
+    setHeight(contentNode.current.offsetHeight);
+  }, []);
+
+  const handleResize = useCallback(() => {
+    if (!contentNode.current) return;
+    setHeight(contentNode.current.offsetHeight);
+  }, []);
+
+  useEventListener(window, 'resize', handleResize);
+
+  useEffect(
+    () => {
+      if (!height) return;
+      if (!containerNode.current) return;
+      const style = document.createElement('style');
+      const keyframeAnimation = createKeyframeAnimation(height);
+      style.textContent = keyframeAnimation;
+      document.head.appendChild(style);
+    },
+    [height],
+  );
+
+  const wrapperClassName = classNames(
+    styles.Collapsible,
+    open && styles.CollapsibleContainerExpanded,
+    !open && styles.CollapsibleContainerCollapsed,
+  );
+
+  const contentClassName = classNames(
+    styles.Collapsible,
+    open && styles.CollapsibleContentExpanded,
+    !open && styles.CollapsibleContentCollapsed,
+  );
+
+  const containerStyles = {
+    animationName: open
+      ? 'collapsibleContainerAnimation'
+      : 'collapsibleContentAnimation',
+    // CollapsibleContainerCollapsed: {
+    //   animationName: 'collapsibleContentAnimation',
+    // },
+    // CollapsibleContentCollapsed: {
+    //   animationName: 'collapsibleContainerAnimation',
+    // },
   };
 
-  private node: HTMLElement | null = null;
-  private heightNode: HTMLElement | null = null;
+  const contentStyles = {
+    animationName: open
+      ? 'collapsibleContentAnimation'
+      : 'collapsibleContainerAnimation',
+  };
 
-  componentWillReceiveProps({open: willOpen}: Props) {
-    const {open} = this.props;
-
-    if (open !== willOpen) {
-      this.setState({animationState: 'measuring'});
-    }
-  }
-
-  componentDidUpdate({open: wasOpen}: Props) {
-    const {animationState} = this.state;
-
-    read(() => {
-      switch (animationState) {
-        case 'idle':
-          break;
-        case 'measuring':
-          this.setState({
-            animationState: wasOpen ? 'closingStart' : 'openingStart',
-            height:
-              wasOpen && this.heightNode ? this.heightNode.scrollHeight : 0,
-          });
-          break;
-        case 'closingStart':
-          this.setState({
-            animationState: 'closing',
-            height: 0,
-          });
-          break;
-        case 'openingStart':
-          this.setState({
-            animationState: 'opening',
-            height: this.heightNode ? this.heightNode.scrollHeight : 0,
-          });
-      }
-    });
-  }
-
-  componentDidMount() {
-    if (this.node == null) {
-      return;
-    }
-
-    addEventListener(this.node, 'transitionend', this.handleTransitionEnd);
-  }
-
-  componentWillUnmount() {
-    if (this.node == null) {
-      return;
-    }
-
-    removeEventListener(this.node, 'transitionend', this.handleTransitionEnd);
-  }
-
-  render() {
-    const {id, open, children} = this.props;
-    const {animationState, height} = this.state;
-
-    const animating = animationState !== 'idle';
-
-    const wrapperClassName = classNames(
-      styles.Collapsible,
-      open && styles.open,
-      animating && styles.animating,
-      !animating && open && styles.fullyOpen,
-    );
-
-    const displayHeight = collapsibleHeight(open, animationState, height);
-
-    const content = animating || open ? children : null;
-
-    return (
-      <div
-        id={id}
-        aria-hidden={!open}
-        style={{height: displayHeight}}
-        className={wrapperClassName}
-        ref={this.bindNode}
-      >
-        <div ref={this.bindHeightNode}>{content}</div>
+  return (
+    <div
+      id={id}
+      aria-hidden={!open}
+      style={containerStyles}
+      className={wrapperClassName}
+      ref={containerNode}
+    >
+      <div ref={contentNode} style={contentStyles} className={contentClassName}>
+        {children}
       </div>
-    );
-  }
-
-  private bindNode = (node: HTMLElement | null) => {
-    this.node = node;
-  };
-
-  private bindHeightNode = (node: HTMLElement | null) => {
-    this.heightNode = node;
-  };
-
-  private handleTransitionEnd = (event: TransitionEvent) => {
-    const {target} = event;
-    if (target === this.node) {
-      this.setState({animationState: 'idle', height: null});
-    }
-  };
+    </div>
+  );
 }
 
-function collapsibleHeight(
-  open: boolean,
-  animationState: AnimationState,
-  height?: number | null,
+export default Collapsible;
+
+type Node = HTMLElement | Document | Window | null;
+
+function useEventListener(
+  node: Node,
+  event: string,
+  handler: (event: Event) => void,
+  capture = false,
+  passive = false,
 ) {
-  if (animationState === 'idle' && open) {
-    return open ? 'auto' : undefined;
-  }
-
-  if (animationState === 'measuring') {
-    return open ? undefined : 'auto';
-  }
-
-  return `${height || 0}px`;
+  useEffect(
+    () => {
+      if (!node) return;
+      addEventListener(node, event, handler, {capture, passive});
+      return () => {
+        if (!node) return;
+        removeEventListener(node, event, handler, capture);
+      };
+    },
+    [capture, event, handler, node, passive],
+  );
 }
 
-export default withAppProvider<Props>()(Collapsible);
+function ease(height: number, pow = 4) {
+  return 1 - Math.pow(1 - height, pow);
+}
+
+// Figure out the size of the element when collapsed.
+function createKeyframeAnimation(height: number) {
+  const heightScale = 0 / height;
+  let animation = '';
+  let inverseAnimation = '';
+
+  for (let step = 0; step <= 100; step++) {
+    // Remap the step value to an eased one.
+    const easedStep = ease(step / 100);
+
+    // Calculate the scale of the element.
+    const yScale = heightScale + (1 - heightScale) * easedStep;
+
+    animation += `${step}% {
+      transform: scaleY(${yScale});
+    }`;
+
+    // And now the inverse for the contents.
+    const invYScale = 1 / yScale;
+    inverseAnimation += `${step}% {
+      transform: scaleY(${invYScale});
+    }`;
+  }
+
+  return `
+  @keyframes collapsibleContainerAnimation {
+    ${animation}
+  }
+
+  @keyframes collapsibleContentAnimation {
+    ${inverseAnimation}
+  }`;
+}

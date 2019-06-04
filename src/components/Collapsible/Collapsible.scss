@@ -1,22 +1,31 @@
 .Collapsible {
   overflow: hidden;
-  height: 0;
   padding-top: 0;
   padding-bottom: 0;
-  opacity: 0;
-  will-change: opacity, height;
+  will-change: transform;
 }
 
-.animating {
-  transition-property: opacity, height;
-  transition-duration: duration(slow);
-  transition-timing-function: easing(out);
+.CollapsibleContainer {
+  // animation-name: collapsibleContainerAnimation;
+  animation-duration: 0.2s;
+  animation-timing-function: linear;
 }
 
-.open {
-  opacity: 1;
+.CollapsibleContent {
+  // animation-name: collapsibleContentAnimation;
+  animation-duration: 0.2s;
+  animation-timing-function: linear;
 }
 
-.fullyOpen {
-  overflow: visible;
-}
+// .CollapsibleContainerExpanded {
+//   animation-name: collapsibleContainerAnimation;
+// }
+// .CollapsibleContentExpanded {
+//   animation-name: collapsibleContentAnimation;
+// }
+// .CollapsibleContainerCollapsed {
+//   animation-name: collapsibleContentAnimation;
+// }
+// .CollapsibleContentCollapsed {
+//   animation-name: collapsibleContainerAnimation;
+// }
