@@ -1,5 +1,5 @@
 {
-  "name": "@shopify/polaris",
+  "name": "@hackplan/polaris",
   "description": "Shopify’s product component library",
   "version": "4.0.0",
   "private": false,
