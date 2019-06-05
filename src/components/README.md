@@ -48,6 +48,14 @@ Use React components in most cases, especially if you’re building a highly int
 Use CSS components if you don’t have or want a build system for your project.
 
 - [Implementation instructions](https://github.com/Shopify/polaris-react#using-the-css-components)
+- Include the CSS in your HTML to implement:
+
+```html
+<link
+  rel="stylesheet"
+  href="https://sdks.shopifycdn.com/polaris/4.0.1/polaris.min.css"
+/>
+```
 
 - Have a look at the [CSS examples](https://github.com/Shopify/polaris-react/tree/master/examples/cdn-styles) to see how it’s done
 
@@ -66,7 +74,7 @@ Include the CSS in your HTML. We suggest copying the styles file into your own p
 ```html
 <link
   rel="stylesheet"
-  href="https://unpkg.com/@shopify/polaris@4.0.0/styles.min.css"
+  href="https://sdks.shopifycdn.com/polaris/4.0.1/polaris.min.css"
 />
 ```
 
@@ -100,7 +108,7 @@ Include the CSS stylesheet in your HTML. We suggest copying the styles file into
 ```html
 <link
   rel="stylesheet"
-  href="https://unpkg.com/@shopify/polaris@4.0.0/styles.min.css"
+  href="https://sdks.shopifycdn.com/polaris/4.0.1/polaris.min.css"
 />
 ```
 
