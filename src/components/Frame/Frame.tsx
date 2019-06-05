@@ -262,18 +262,20 @@ class Frame extends React.PureComponent<CombinedProps, State> {
         >
           {skipMarkup}
           {topBarMarkup}
-          {navigationMarkup}
-          {contextualSaveBarMarkup}
-          {loadingMarkup}
-          {navigationOverlayMarkup}
-          <main
-            className={styles.Main}
-            id={APP_FRAME_MAIN}
-            data-has-global-ribbon={Boolean(globalRibbon)}
-          >
-            {skipToMainContentTarget}
-            <div className={styles.Content}>{children}</div>
-          </main>
+          <div className={styles.LayoutWithNav}>
+            {navigationMarkup}
+            {contextualSaveBarMarkup}
+            {loadingMarkup}
+            {navigationOverlayMarkup}
+            <main
+              className={styles.Main}
+              id={APP_FRAME_MAIN}
+              data-has-global-ribbon={Boolean(globalRibbon)}
+            >
+              {skipToMainContentTarget}
+              <div className={styles.Content}>{children}</div>
+            </main>
+          </div>
           <ToastManager toastMessages={toastMessages} />
           {globalRibbonMarkup}
           <EventListener event="resize" handler={this.handleResize} />

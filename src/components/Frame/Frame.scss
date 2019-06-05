@@ -7,6 +7,7 @@ $skip-vertical-offset: rem(10px);
   width: 100%;
   min-height: 100vh;
   display: flex;
+  flex-direction: column;
   background-color: color('sky', 'light');
 
   @include when-printing {
@@ -14,12 +15,17 @@ $skip-vertical-offset: rem(10px);
   }
 }
 
+.LayoutWithNav{
+  width: 100%;
+  display: flex;
+  flex: 1 0 auto;
+  position: relative;
+  align-items: stretch;
+}
+
 .Navigation {
   @include hidden-when-printing;
-  position: fixed;
   z-index: z-index(nav, $fixed-element-stacking-order);
-  top: 0;
-  left: 0;
   display: none;
   flex: 0 0 auto;
   align-items: stretch;
@@ -29,9 +35,7 @@ $skip-vertical-offset: rem(10px);
 
   @include frame-when-nav-displayed {
     z-index: 1;
-    top: top-bar-height();
     display: flex;
-    height: calc(100% - #{top-bar-height()});
   }
 
   &:focus {
@@ -99,10 +103,7 @@ $skip-vertical-offset: rem(10px);
 
 .TopBar {
   @include hidden-when-printing;
-  position: fixed;
   z-index: z-index(top-bar, $fixed-element-stacking-order);
-  top: 0;
-  left: 0;
   width: 100%;
 }
 
