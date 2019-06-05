@@ -124,23 +124,6 @@ $skip-vertical-offset: rem(10px);
   @include safe-area-for(padding-right, 0, right);
   @include safe-area-for(padding-left, 0, left);
   @include safe-area-for(padding-bottom, 0, bottom);
-
-  @include frame-when-nav-displayed {
-    .hasNav & {
-      padding-left: layout-width(nav);
-      @include when-printing {
-        padding-left: 0;
-      }
-      @include safe-area-for(padding-left, layout-width(nav), left);
-    }
-  }
-
-  .hasTopBar & {
-    padding-top: top-bar-height();
-    @include when-printing {
-      padding-top: 0;
-    }
-  }
 }
 
 .Content {
