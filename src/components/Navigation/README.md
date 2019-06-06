@@ -243,7 +243,6 @@ Use to present a navigation menu in the [frame](/components/structure/frame).
 ```jsx
 <Navigation location="/" iconOnly={true}>
   <Navigation.Section
-    iconOnly={true}
     items={[
       {
         url: '/path/to/place',

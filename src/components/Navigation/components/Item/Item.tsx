@@ -55,7 +55,6 @@ export interface Props extends ItemURLDetails {
   selected?: boolean;
   exactMatch?: boolean;
   new?: boolean;
-  iconOnly?: boolean;
   className?: string;
   buttonClassName?: string;
   itemClassName?: string;
@@ -88,13 +87,12 @@ export default function Item({
   exactMatch,
   matchPaths,
   excludePaths,
-  iconOnly,
   className,
   buttonClassName,
   itemClassName
 }: Props) {
   const intl = useI18n();
-  const {location, onNavigationDismiss} = useContext(NavigationContext);
+  const {location, onNavigationDismiss, iconOnly} = useContext(NavigationContext);
   const [expanded, setExpanded] = useState(false);
 
   const handleResize = useCallback(

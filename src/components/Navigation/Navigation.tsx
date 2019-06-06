@@ -44,6 +44,7 @@ export default class Navigation extends React.Component<Props, never> {
     const context = {
       location,
       onNavigationDismiss: onDismiss,
+      iconOnly,
     };
 
     return (

@@ -19,7 +19,6 @@ export interface Props {
   icon?: IconProps['source'];
   title?: string;
   fill?: boolean;
-  iconOnly?: boolean;
   rollup?: {
     after: number;
     view: string;
@@ -52,7 +51,7 @@ export default class Section extends React.Component<Props, State> {
   }
 
   render() {
-    const {title, fill, action, items, rollup, separator, iconOnly} = this.props;
+    const {title, fill, action, items, rollup, separator} = this.props;
     const {expanded} = this.state;
 
     const className = classNames(
@@ -89,7 +88,6 @@ export default class Section extends React.Component<Props, State> {
           {...rest}
           key={label}
           label={label}
-          iconOnly={iconOnly}
           subNavigationItems={subNavigationItems}
           onClick={this.handleClick(onClick, hasSubNavItems)}
         />
