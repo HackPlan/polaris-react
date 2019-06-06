@@ -1,6 +1,6 @@
 @import '../../styles/common';
 
-$button-size: rem(32px);
+$button-size: rem(36px);
 $skip-vertical-offset: rem(10px);
 
 .Frame {
@@ -43,6 +43,10 @@ $skip-vertical-offset: rem(10px);
   }
 }
 
+.NavContainer{
+  z-index: 999;
+}
+
 .Navigation-enter,
 .Navigation-enterActive,
 .Navigation-exit,
@@ -71,14 +75,15 @@ $skip-vertical-offset: rem(10px);
 .NavigationDismiss {
   @include hidden-when-printing;
   position: absolute;
-  top: 0;
-  left: 100%;
+  top: -1 * top-bar-height();
+  left: 0;
   width: $button-size;
   height: $button-size;
-  margin: spacing();
+  margin: 1rem;
   padding: 0;
   border: none;
-  background: none;
+  border-radius: 4px;
+  background: var(--top-bar-background);
   opacity: 0;
   pointer-events: none;
   will-change: opacity;
@@ -92,7 +97,7 @@ $skip-vertical-offset: rem(10px);
 
   &:focus {
     border-radius: border-radius();
-    background-color: rgba(color('white'), 0.16);
+    background-color: var(--top-bar-background);
     outline: none;
   }
 
@@ -120,16 +125,27 @@ $skip-vertical-offset: rem(10px);
   display: flex;
   align-items: stretch;
 
+  flex-grow: 1;
+  position: relative;
+  overflow: hidden;
+
   @include layout-flex-fix;
-  @include safe-area-for(padding-right, 0, right);
-  @include safe-area-for(padding-left, 0, left);
-  @include safe-area-for(padding-bottom, 0, bottom);
 }
 
 .Content {
-  padding-bottom: var(--global-ribbon-height, 0);
+  height: 100%;
+  position: absolute;
+  top: 0;
+  width: 100%;
   flex: 1;
   @include layout-flex-fix;
+}
+
+.ContentScrollContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: auto;
 }
 
 .GlobalRibbonContainer {

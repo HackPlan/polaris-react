@@ -11,6 +11,7 @@ import Focus from '../Focus';
 
 export interface Props {
   trapping?: boolean;
+  className?: string;
   children?: React.ReactNode;
 }
 
@@ -40,11 +41,11 @@ export default class TrapFocus extends React.PureComponent<Props, State> {
   }
 
   render() {
-    const {children} = this.props;
+    const {children, className} = this.props;
 
     return (
       <Focus disabled={this.shouldDisable} root={this.focusTrapWrapper}>
-        <div ref={this.setFocusTrapWrapper}>
+        <div className={className} ref={this.setFocusTrapWrapper}>
           <EventListener event="focusout" handler={this.handleBlur} />
           {children}
         </div>
