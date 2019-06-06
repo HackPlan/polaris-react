@@ -1,14 +1,12 @@
 import React from 'react';
 import {Modal as AppBridgeModal} from '@shopify/app-bridge/actions';
 import {animationFrame} from '@shopify/jest-dom-mocks';
-import {findByTestID, mountWithAppProvider} from 'test-utilities';
+import {findByTestID, mountWithAppProvider} from 'test-utilities/legacy';
 import {Badge, Spinner, Portal, Scrollable} from 'components';
 import {Footer, Dialog} from '../components';
 import Modal from '../Modal';
 
-import WithinContentContext, {
-  WithinContentContextType,
-} from '../../WithinContentContext';
+import WithinContentContext from '../../WithinContentContext';
 
 jest.mock('../../../utilities/app-bridge-transformers', () => ({
   ...require.requireActual('../../../utilities/app-bridge-transformers'),
@@ -25,15 +23,17 @@ describe('<Modal>', () => {
   });
 
   it('has a child with contentContext', () => {
-    function TestComponent(_: WithinContentContextType) {
+    function TestComponent(_: {withinContentContainer: any}) {
       return null;
     }
 
     const component = mountWithAppProvider(
       <Modal onClose={jest.fn()} open>
         <WithinContentContext.Consumer>
-          {(props) => {
-            return <TestComponent {...props} />;
+          {(withinContentContext) => {
+            return (
+              <TestComponent withinContentContainer={withinContentContext} />
+            );
           }}
         </WithinContentContext.Consumer>
       </Modal>,
