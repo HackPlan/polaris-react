@@ -2,6 +2,7 @@ import React from 'react';
 
 export interface NavigationContextType {
   location: string;
+  iconOnly?: boolean;
   onNavigationDismiss?(): void;
   withinContentContainer?: boolean;
 }
