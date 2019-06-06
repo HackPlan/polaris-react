@@ -208,6 +208,93 @@ Use to present a navigation menu in the [frame](/components/structure/frame).
 </Navigation>
 ```
 
+### Navigation with sub-items
+
+Use to present a navigation menu in the [frame](/components/structure/frame).
+
+```jsx
+<Navigation location="/">
+  <Navigation.Section
+    items={[
+      {
+        url: '/path/to/place',
+        label: 'Home',
+        icon: HomeMajorMonotone,
+      },
+      {
+        url: '/path/to/place',
+        label: 'Orders',
+        icon: OrdersMajorTwotone,
+        badge: '15',
+      },
+      {
+        url: '/',
+        label: 'Products',
+        icon: ProductsMajorTwotone,
+        subNavigationItems: [
+          {
+            label: 'Sub Item 1',
+            url: '/path/to/place',
+          },
+          {
+            label: 'Sub Item 2',
+            url: '/path/to/place',
+          },
+          {
+            label: 'Sub Item 3',
+            url: '/path/to/place',
+          },
+        ]
+      },
+    ]}
+  />
+</Navigation>
+```
+
+### Navigation with sub-items (Icon Only)
+
+Use to present a navigation menu in the [frame](/components/structure/frame).
+
+```jsx
+<Navigation location="/" iconOnly={true}>
+  <Navigation.Section
+    iconOnly={true}
+    items={[
+      {
+        url: '/path/to/place',
+        label: 'Home',
+        icon: HomeMajorMonotone,
+      },
+      {
+        url: '/path/to/place',
+        label: 'Orders',
+        icon: OrdersMajorTwotone,
+        badge: '15',
+      },
+      {
+        url: '/',
+        label: 'Products',
+        icon: ProductsMajorTwotone,
+        subNavigationItems: [
+          {
+            label: 'Sub Item 1',
+            url: '/path/to/place',
+          },
+          {
+            label: 'Sub Item 2',
+            url: '/path/to/place',
+          },
+          {
+            label: 'Sub Item 3',
+            url: '/path/to/place',
+          },
+        ]
+      },
+    ]}
+  />
+</Navigation>
+```
+
 ### Navigation with sections and a separator
 
 Use to divide groups of items with a horizontal divider.

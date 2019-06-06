@@ -1,4 +1,5 @@
 import React from 'react';
+import classNames from 'classnames';
 
 import Scrollable from '../Scrollable';
 
@@ -16,6 +17,7 @@ export interface Props {
   /** @deprecated Pass a user menu into <TopBar /> instead. */
   userMenu?: React.ReactNode;
   contextControl?: React.ReactNode;
+  iconOnly?: boolean;
   onDismiss?(): void;
 }
 
@@ -42,7 +44,13 @@ export default class Navigation extends React.Component<Props, never> {
       contextControl,
       location,
       onDismiss,
+      iconOnly,
     } = this.props;
+
+    const navClassName = classNames(
+      styles.Navigation,
+      iconOnly && styles['Navigation-IconOnly'],
+    );
 
     const contextControlMarkup = contextControl && (
       <div className={styles.ContextControl}>{contextControl}</div>
@@ -56,7 +64,7 @@ export default class Navigation extends React.Component<Props, never> {
     return (
       <NavigationContext.Provider value={context}>
         <WithinContentContext.Provider value={{withinContentContainer: true}}>
-          <nav className={styles.Navigation}>
+          <nav className={navClassName}>
             {contextControlMarkup}
             <div className={styles.UserMenu}>{userMenu}</div>
             <Scrollable className={styles.PrimaryNavigation}>

@@ -13,6 +13,7 @@ import {navigationBarCollapsed} from '../../../../utilities/breakpoints';
 
 import NavigationContext from '../../context';
 import Badge from '../../../Badge';
+import Popover from '../../../Popover';
 import Icon, {Props as IconProps} from '../../../Icon';
 import Indicator from '../../../Indicator';
 import UnstyledLink from '../../../UnstyledLink';
@@ -55,6 +56,10 @@ export interface Props extends ItemURLDetails {
   selected?: boolean;
   exactMatch?: boolean;
   new?: boolean;
+  iconOnly?: boolean;
+  className?: string;
+  buttonClassName?: string;
+  itemClassName?: string;
   subNavigationItems?: SubNavigationItem[];
   secondaryAction?: SecondaryAction;
   onClick?(): void;
@@ -85,6 +90,10 @@ export default function Item({
   exactMatch,
   matchPaths,
   excludePaths,
+  iconOnly,
+  className,
+  buttonClassName,
+  itemClassName
 }: Props) {
   const {intl} = usePolaris();
   const {location, onNavigationDismiss} = useContext(NavigationContext);
@@ -168,17 +177,22 @@ export default function Item({
     </Fragment>
   );
 
-  if (url == null) {
-    const className = classNames(
-      styles.Item,
-      disabled && styles['Item-disabled'],
-    );
+  const listClassName = classNames(
+    className, styles.ListItem,
+    secondaryAction && styles['ListItem-hasAction'],
+  );
+  const btnClassName = classNames(
+    buttonClassName,
+    styles.Item,
+    disabled && styles['Item-disabled'],
+  );
 
+  if (url == null) {
     return (
-      <li className={styles.ListItem}>
+      <li className={listClassName}>
         <button
           type="button"
-          className={className}
+          className={btnClassName}
           disabled={disabled}
           aria-disabled={disabled}
           aria-label={accessibilityLabel}
@@ -226,9 +240,11 @@ export default function Item({
         matchState === MatchState.MatchPaths
       : selectedOverride;
 
-  const showExpanded = selected || expanded || childIsActive;
+  const showExpanded = !iconOnly && selected || expanded || childIsActive;
+  const showExpandedPopover = iconOnly && selected || childIsActive;
 
-  const itemClassName = classNames(
+  const compoundItemClassName = classNames(
+    itemClassName,
     styles.Item,
     disabled && styles['Item-disabled'],
     selected && subNavigationItems.length === 0 && styles['Item-selected'],
@@ -237,11 +253,11 @@ export default function Item({
 
   let secondaryNavigationMarkup: ReactNode = null;
 
-  if (subNavigationItems.length > 0 && showExpanded) {
-    const longestMatch = matchingSubNavigationItems.sort(
-      ({url: firstUrl}, {url: secondUrl}) => secondUrl.length - firstUrl.length,
-    )[0];
+  const longestMatch = matchingSubNavigationItems.sort(
+    ({url: firstUrl}, {url: secondUrl}) => secondUrl.length - firstUrl.length,
+  )[0];
 
+  if (subNavigationItems.length > 0 && showExpanded) {
     secondaryNavigationMarkup = (
       <div className={styles.SecondaryNavigation}>
         <Secondary expanded={showExpanded}>
@@ -262,16 +278,67 @@ export default function Item({
     );
   }
 
-  const className = classNames(
-    styles.ListItem,
-    secondaryAction && styles['ListItem-hasAction'],
-  );
+  if (subNavigationItems.length > 0 && showExpandedPopover) {
+    const showPopover = () => {
+      setExpanded(true)
+    };
+
+    const hidePopover = () => {
+      setExpanded(false)
+    };
+
+    const openArrowSvg = () => (
+      <svg width="20" height="20" viewBox="0 0 20 20"><path d="M6.79 5.404l.694-.72 5.446 5.26-5.26 5.446-.72-.694 4.566-4.727" fill-rule="evenodd"></path></svg>
+    )
+    const activator = (
+      <div className={styles.SubItemsPopoverActivator}>
+        <Icon source={openArrowSvg} color="inkLighter"/>
+      </div>
+    );
+
+    secondaryNavigationMarkup = (
+      <div
+        onFocus={showPopover}
+        onBlur={hidePopover}
+        onMouseEnter={showPopover}
+        onMouseLeave={hidePopover}
+        className={styles.SubItemsPopover}>
+        <Popover
+          active={expanded}
+          activator={activator}
+          onClose={hidePopover}
+          preferredPosition={'right'}
+        >
+          <Popover.Pane fixed>
+            <Popover.Section>
+              <p>{label}</p>
+            </Popover.Section>
+          </Popover.Pane>
+          <Popover.Pane>
+            {subNavigationItems.map((item) => {
+              const {label, ...rest} = item;
+              return (
+                <Item
+                  {...rest}
+                  key={label}
+                  label={label}
+                  itemClassName={styles.SubItemsPopoverItem}
+                  matches={item === longestMatch}
+                  onClick={onNavigationDismiss}
+                />
+              );
+            })}
+          </Popover.Pane>
+        </Popover>
+      </div>
+    );
+  }
 
   return (
-    <li className={className}>
+    <li className={listClassName}>
       <UnstyledLink
         url={url}
-        className={itemClassName}
+        className={compoundItemClassName}
         tabIndex={tabIndex}
         aria-disabled={disabled}
         aria-label={accessibilityLabel}
