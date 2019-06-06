@@ -18,7 +18,7 @@ import {
 import styles from './PositionedOverlay.scss';
 
 export {PreferredPosition, PreferredAlignment};
-export type Positioning = 'above' | 'below';
+export type Positioning = 'above' | 'below' | 'right';
 
 export interface OverlayDetails {
   left: number;
@@ -233,7 +233,7 @@ export default class PositionedOverlay extends React.PureComponent<
           {
             measuring: false,
             activatorRect: getRectForNode(activator),
-            left: horizontalPosition,
+            left: (verticalPosition as any).left || horizontalPosition,
             top: lockPosition ? top : verticalPosition.top,
             lockPosition: Boolean(fixed),
             height: verticalPosition.height || 0,

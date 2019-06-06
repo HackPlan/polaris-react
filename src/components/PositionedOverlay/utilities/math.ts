@@ -1,6 +1,6 @@
 import {Rect} from '@shopify/javascript-utilities/geometry';
 
-export type PreferredPosition = 'above' | 'below' | 'mostSpace';
+export type PreferredPosition = 'above' | 'below' | 'mostSpace' | 'right';
 export type PreferredAlignment = 'left' | 'center' | 'right';
 
 export interface Margins {
@@ -19,6 +19,7 @@ export function calculateVerticalPosition(
   fixed: boolean | undefined,
 ) {
   const activatorTop = activatorRect.top;
+  const activatorRight = activatorRect.left + activatorRect.width;
   const activatorBottom = activatorTop + activatorRect.height;
   const spaceAbove = activatorRect.top;
   const spaceBelow =
@@ -71,6 +72,15 @@ export function calculateVerticalPosition(
       (spaceBelow > desiredHeight || spaceBelow > spaceAbove)
       ? positionIfBelow
       : positionIfAbove;
+  }
+
+  if (preferredPosition === 'right') {
+    return {
+      height: heightIfBelow - verticalMargins,
+      left: activatorRight,
+      top: activatorTop,
+      positioning: 'right',
+    }
   }
 
   if (enoughSpaceFromTopScroll && enoughSpaceFromBottomScroll) {

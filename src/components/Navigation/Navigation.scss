@@ -28,6 +28,30 @@ $nav-max-width: rem(360px);
   }
 }
 
+.Navigation-IconOnly {
+  width: nav(item-line-height) + spacing(tight) * 2;
+  min-width: auto;
+  max-width: auto;
+  .Polaris-Navigation__Text {
+    display: none;
+  }
+  .Item {
+    padding: 0;
+    margin: 0;
+  }
+  .Icon {
+    margin: spacing(tight);
+  }
+  .ListItem{
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .Text, .Badge, .SecondaryNavigation{
+    display: none;
+  }
+}
+
 .UserMenu {
   flex: 0 0 auto;
 }
@@ -107,6 +131,36 @@ $disabled-fade: 0.6;
 
 .Text {
   @include nav-item-text-attributes;
+}
+
+.SubItemsPopover{
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  > div {
+    height: 100%;
+  }
+}
+
+.SubItemsPopoverActivator{
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  flex-direction: column;
+  justify-content: center;
+  > span {
+    margin: 0;
+    width: 16px;
+    overflow: hidden;
+  }
+}
+
+.SubItemsPopoverItem{
+  margin: 0;
+  padding: spacing(extra-tight) spacing();
 }
 
 .SecondaryAction {

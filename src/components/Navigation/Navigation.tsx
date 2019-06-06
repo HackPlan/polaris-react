@@ -1,4 +1,5 @@
 import React from 'react';
+import classNames from 'classnames';
 
 import Scrollable from '../Scrollable';
 
@@ -14,6 +15,7 @@ export interface Props {
   sections?: SectionType[];
   children?: React.ReactNode;
   contextControl?: React.ReactNode;
+  iconOnly?: boolean;
   onDismiss?(): void;
 }
 
@@ -22,7 +24,18 @@ export default class Navigation extends React.Component<Props, never> {
   static Section = Section;
 
   render() {
-    const {children, contextControl, location, onDismiss} = this.props;
+    const {
+      children,
+      contextControl,
+      location,
+      onDismiss,
+      iconOnly,
+    } = this.props;
+
+    const navClassName = classNames(
+      styles.Navigation,
+      iconOnly && styles['Navigation-IconOnly'],
+    );
 
     const contextControlMarkup = contextControl && (
       <div className={styles.ContextControl}>{contextControl}</div>
@@ -36,7 +49,7 @@ export default class Navigation extends React.Component<Props, never> {
     return (
       <NavigationContext.Provider value={context}>
         <WithinContentContext.Provider value>
-          <nav className={styles.Navigation}>
+          <nav className={navClassName}>
             {contextControlMarkup}
             <Scrollable className={styles.PrimaryNavigation}>
               {children}
