@@ -8,7 +8,7 @@ import {
   FlagMajorTwotone,
 } from '@shopify/polaris-icons';
 import {ReactWrapper} from 'enzyme';
-import {mountWithAppProvider} from 'test-utilities';
+import {mountWithAppProvider} from 'test-utilities/legacy';
 import {Button, Icon, UnstyledLink, Heading} from 'components';
 import Banner from '..';
 import WithinContentContext from '../../WithinContentContext';
@@ -96,12 +96,8 @@ describe('<Banner />', () => {
     expect(unstyledLink.prop('rel')).toBe('noopener noreferrer');
   });
 
-  const mockContext = {
-    withinContentContainer: true,
-  };
-
   const bannerWithContentContext = mountWithAppProvider(
-    <WithinContentContext.Provider value={mockContext}>
+    <WithinContentContext.Provider value>
       <Banner
         action={{
           content: 'Primary action',

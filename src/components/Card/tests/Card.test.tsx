@@ -1,23 +1,23 @@
 import React from 'react';
-import {mountWithAppProvider} from 'test-utilities';
+import {mountWithAppProvider} from 'test-utilities/legacy';
 import {Card, Badge, Button} from 'components';
 
-import WithinContentContext, {
-  WithinContentContextType,
-} from '../../WithinContentContext';
+import WithinContentContext from '../../WithinContentContext';
 import {Section} from '../components';
 
 describe('<Card />', () => {
   it('has a child with prop withinContentContainer set to true', () => {
-    function TestComponent(_: WithinContentContextType) {
+    function TestComponent(_: {withinContentContainer: any}) {
       return null;
     }
 
     const component = mountWithAppProvider(
       <Card>
         <WithinContentContext.Consumer>
-          {(props) => {
-            return <TestComponent {...props} />;
+          {(withinContentContext) => {
+            return (
+              <TestComponent withinContentContainer={withinContentContext} />
+            );
           }}
         </WithinContentContext.Consumer>
       </Card>,
