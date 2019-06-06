@@ -106,7 +106,7 @@ export class Frame extends React.PureComponent<CombinedProps, State> {
     const tabIndex = mobileNavShowing ? 0 : -1;
 
     const navigationMarkup = navigation ? (
-      <TrapFocus trapping={mobileNavShowing}>
+      <TrapFocus className={styles.NavContainer} trapping={mobileNavShowing}>
         <CSSTransition
           appear={mobileView}
           exit={mobileView}
@@ -251,7 +251,9 @@ export class Frame extends React.PureComponent<CombinedProps, State> {
                 id={APP_FRAME_MAIN}
                 data-has-global-ribbon={Boolean(globalRibbon)}
               >
-                <div className={styles.Content}>{children}</div>
+                <div className={styles.Content}>
+                  <div className={styles.ContentScrollContainer}>{children}</div>
+                </div>
               </main>
             </div>
           </UserMenuProvider>
