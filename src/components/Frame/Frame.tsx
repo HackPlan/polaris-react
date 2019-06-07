@@ -1,8 +1,8 @@
 import React from 'react';
 import {MobileCancelMajorMonotone} from '@shopify/polaris-icons';
-import {classNames} from '@shopify/css-utilities';
 import {durationSlow} from '@shopify/polaris-tokens';
 import {CSSTransition} from 'react-transition-group';
+import {classNames} from '../../utilities/css';
 import {navigationBarCollapsed} from '../../utilities/breakpoints';
 import Button from '../Button';
 import Icon from '../Icon';
@@ -10,7 +10,6 @@ import EventListener from '../EventListener';
 import {withAppProvider, WithAppProviderProps} from '../AppProvider';
 import Backdrop from '../Backdrop';
 import TrapFocus from '../TrapFocus';
-import {UserMenuProvider} from '../TopBar';
 import {dataPolarisTopBar, layer} from '../shared';
 import {setRootProperty} from '../../utilities/setRootProperty';
 import {ContextualSaveBarProps, ToastID, ToastPropsWithID} from './types';
@@ -239,25 +238,22 @@ export class Frame extends React.PureComponent<CombinedProps, State> {
           {...navigationAttributes}
         >
           {skipMarkup}
-          <UserMenuProvider mobileView={mobileView || false}>
-            {topBarMarkup}
-            <div className={styles.LayoutWithNav}>
-              {navigationMarkup}
-              {contextualSaveBarMarkup}
-              {loadingMarkup}
-              {navigationOverlayMarkup}
-              <main
-                className={styles.Main}
-                id={APP_FRAME_MAIN}
-                data-has-global-ribbon={Boolean(globalRibbon)}
-              >
-                <div className={styles.Content}>
-                  <div className={styles.ContentScrollContainer}>{children}</div>
-                </div>
-              </main>
-            </div>
-          </UserMenuProvider>
-
+          {topBarMarkup}
+          <div className={styles.LayoutWithNav}>
+            {navigationMarkup}
+            {contextualSaveBarMarkup}
+            {loadingMarkup}
+            {navigationOverlayMarkup}
+            <main
+              className={styles.Main}
+              id={APP_FRAME_MAIN}
+              data-has-global-ribbon={Boolean(globalRibbon)}
+            >
+              <div className={styles.Content}>
+                <div className={styles.ContentScrollContainer}>{children}</div>
+              </div>
+            </main>
+          </div>
           <ToastManager toastMessages={toastMessages} />
           {globalRibbonMarkup}
           <EventListener event="resize" handler={this.handleResize} />
