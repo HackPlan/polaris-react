@@ -241,36 +241,36 @@ Use to present a navigation menu in the [frame](/components/structure/frame).
 Use to present a navigation menu in the [frame](/components/structure/frame).
 
 ```jsx
-<Navigation location="/" iconOnly={true}>
+<Navigation location="/path/to/place/2" iconOnly={true}>
   <Navigation.Section
     items={[
       {
-        url: '/path/to/place',
+        url: '/path/to/home',
         label: 'Home',
         icon: HomeMajorMonotone,
       },
       {
-        url: '/path/to/place',
+        url: '/path/to/order',
         label: 'Orders',
         icon: OrdersMajorTwotone,
         badge: '15',
       },
       {
-        url: '/',
+        url: '/path/to/place',
         label: 'Products',
         icon: ProductsMajorTwotone,
         subNavigationItems: [
           {
             label: 'Sub Item 1',
-            url: '/path/to/place',
+            url: '/path/to/place/1',
           },
           {
             label: 'Sub Item 2',
-            url: '/path/to/place',
+            url: '/path/to/place/2',
           },
           {
             label: 'Sub Item 3',
-            url: '/path/to/place',
+            url: '/path/to/place/3',
           },
         ],
       },

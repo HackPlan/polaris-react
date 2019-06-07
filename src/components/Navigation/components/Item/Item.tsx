@@ -229,13 +229,13 @@ export default function Item({
       : selectedOverride;
 
   const showExpanded = !iconOnly && selected || expanded || childIsActive;
-  const showExpandedPopover = iconOnly && selected || childIsActive;
+  const showExpandedPopover = iconOnly && (selected || childIsActive);
 
   const compoundItemClassName = classNames(
     itemClassName,
     styles.Item,
     disabled && styles['Item-disabled'],
-    selected && subNavigationItems.length === 0 && styles['Item-selected'],
+    selected && (subNavigationItems.length === 0 || iconOnly) && styles['Item-selected'],
     showExpanded && styles.subNavigationActive,
   );
 
