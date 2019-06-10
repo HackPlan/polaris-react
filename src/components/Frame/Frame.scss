@@ -142,8 +142,6 @@ $skip-vertical-offset: rem(10px);
 }
 
 .ContentScrollContainer {
-  display: flex;
-  flex-direction: column;
   height: 100%;
   overflow: auto;
 }
