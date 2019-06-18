@@ -9,8 +9,8 @@ import EventListener from '../EventListener';
 import {Cell, CellProps, Navigation} from './components';
 import {measureColumn, getPrevAndCurrentColumns} from './utilities';
 
-import {DataTableState, SortDirection} from './types';
-import styles from './DataTable.scss';
+import {ResourceTableState, SortDirection} from './types';
+import styles from './ResourceTable.scss';
 
 export type CombinedProps = Props & WithAppProviderProps;
 export type TableRow = Props['headings'] | Props['rows'] | Props['totals'];
@@ -49,11 +49,11 @@ export interface Props {
   onSort?(headingIndex: number, direction: SortDirection): void;
 }
 
-export class DataTable extends React.PureComponent<
+export class ResourceTable extends React.PureComponent<
   CombinedProps,
-  DataTableState
+  ResourceTableState
 > {
-  state: DataTableState = {
+  state: ResourceTableState = {
     collapsed: false,
     columnVisibilityData: [],
     heights: [],
@@ -62,7 +62,7 @@ export class DataTable extends React.PureComponent<
     isScrolledFarthestRight: false,
   };
 
-  private dataTable = React.createRef<HTMLDivElement>();
+  private resourceTable = React.createRef<HTMLDivElement>();
   private scrollContainer = React.createRef<HTMLDivElement>();
   private table = React.createRef<HTMLTableElement>();
   private totalsRowHeading: string;
@@ -140,7 +140,7 @@ export class DataTable extends React.PureComponent<
     } = this.state;
 
     const className = classNames(
-      styles.DataTable,
+      styles.ResourceTable,
       collapsed && styles.collapsed,
       footerContent && styles.hasFooter,
     );
@@ -215,7 +215,7 @@ export class DataTable extends React.PureComponent<
           navigateTableLeft={this.navigateTable('left')}
           navigateTableRight={this.navigateTable('right')}
         />
-        <div className={className} ref={this.dataTable}>
+        <div className={className} ref={this.resourceTable}>
           <div
             className={styles.ScrollContainer}
             ref={this.scrollContainer}
@@ -295,9 +295,9 @@ export class DataTable extends React.PureComponent<
     const {
       table: {current: table},
       scrollContainer: {current: scrollContainer},
-      dataTable: {current: dataTable},
+      resourceTable: {current: resourceTable},
     } = this;
-    if (collapsed && table && scrollContainer && dataTable) {
+    if (collapsed && table && scrollContainer && resourceTable) {
       const headerCells = table.querySelectorAll(
         headerCell.selector,
       ) as NodeListOf<HTMLElement>;
@@ -307,7 +307,7 @@ export class DataTable extends React.PureComponent<
       const tableLeftVisibleEdge =
         scrollContainer.scrollLeft + fixedColumnWidth;
       const tableRightVisibleEdge =
-        scrollContainer.scrollLeft + dataTable.offsetWidth;
+        scrollContainer.scrollLeft + resourceTable.offsetWidth;
       const tableData = {
         fixedColumnWidth,
         firstVisibleColumnIndex,
@@ -501,4 +501,4 @@ export class DataTable extends React.PureComponent<
   };
 }
 
-export default withAppProvider<Props>()(DataTable);
+export default withAppProvider<Props>()(ResourceTable);

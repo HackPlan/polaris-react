@@ -2,9 +2,9 @@ import React from 'react';
 import {mountWithAppProvider, findByTestID} from 'test-utilities/legacy';
 import {isEdgeVisible, getPrevAndCurrentColumns} from '../utilities';
 import {Cell, Navigation} from '../components';
-import DataTable, {CombinedProps as Props} from '../DataTable';
+import ResourceTable, {CombinedProps as Props} from '../ResourceTable';
 
-interface DataTableTestProps {
+interface ResourceTableTestProps {
   sortable?: Props['sortable'];
   defaultSortDirection?: Props['defaultSortDirection'];
   initialSortColumnIndex?: Props['initialSortColumnIndex'];
@@ -21,7 +21,7 @@ const columnContentTypes: Props['columnContentTypes'] = [
 ];
 const spyOnSort = jest.fn();
 
-function setup(propOverrides?: DataTableTestProps) {
+function setup(propOverrides?: ResourceTableTestProps) {
   const headings = ['Product', 'Price', 'Order Number', 'Quantity', 'Subtotal'];
   const rows = [
     [
@@ -43,71 +43,71 @@ function setup(propOverrides?: DataTableTestProps) {
     summary,
     ...propOverrides,
   };
-  const dataTable = mountWithAppProvider(<DataTable {...props} />);
+  const resourceTable = mountWithAppProvider(<ResourceTable {...props} />);
 
   return {
     ...props,
-    dataTable,
+    resourceTable,
     twoClicks: true,
   };
 }
 
-describe('<DataTable />', () => {
+describe('<ResourceTable />', () => {
   it('renders a table, thead and table body rows', () => {
-    const {dataTable} = setup();
+    const {resourceTable} = setup();
 
-    expect(dataTable.find('table')).toHaveLength(1);
-    expect(dataTable.find('thead')).toHaveLength(1);
-    expect(dataTable.find('thead th')).toHaveLength(5);
-    expect(dataTable.find('tbody tr')).toHaveLength(3);
+    expect(resourceTable.find('table')).toHaveLength(1);
+    expect(resourceTable.find('thead')).toHaveLength(1);
+    expect(resourceTable.find('thead th')).toHaveLength(5);
+    expect(resourceTable.find('tbody tr')).toHaveLength(3);
   });
 
   it('defaults to non-sorting column headings', () => {
-    const {dataTable} = setup();
-    const sortableHeadings = dataTable.find(Cell).filter({sortable: true});
+    const {resourceTable} = setup();
+    const sortableHeadings = resourceTable.find(Cell).filter({sortable: true});
 
     expect(sortableHeadings).toHaveLength(0);
   });
 
   it('initial sort column defaults to first column if not specified', () => {
     const firstColumnSortable = [true, true, false, false, true, false];
-    const {dataTable} = setup({
+    const {resourceTable} = setup({
       sortable: firstColumnSortable,
       onSort: spyOnSort,
     });
-    const firstHeadingCell = findByTestID(dataTable, `heading-cell-${0}`);
+    const firstHeadingCell = findByTestID(resourceTable, `heading-cell-${0}`);
 
     expect(firstHeadingCell.props().sorted).toBe(true);
   });
 
   it('sets specified initial sort column', () => {
-    const {dataTable} = setup({
+    const {resourceTable} = setup({
       sortable,
       onSort: spyOnSort,
       initialSortColumnIndex: 4,
     });
-    const fifthHeadingCell = findByTestID(dataTable, `heading-cell-${4}`);
+    const fifthHeadingCell = findByTestID(resourceTable, `heading-cell-${4}`);
 
     expect(fifthHeadingCell.props().sorted).toBe(true);
   });
 
   describe('<Cell />', () => {
-    const {dataTable} = setup();
+    const {resourceTable} = setup();
     it('passes props', () => {
       expect(
-        dataTable
+        resourceTable
           .find(Cell)
           .first()
           .prop('header'),
       ).toBe(true);
       expect(
-        dataTable
+        resourceTable
           .find(Cell)
           .first()
           .prop('content'),
       ).toStrictEqual('Product');
       expect(
-        dataTable
+        resourceTable
           .find(Cell)
           .first()
           .prop('contentType'),
@@ -116,16 +116,16 @@ describe('<DataTable />', () => {
   });
 
   describe('<Navigation />', () => {
-    const {dataTable} = setup();
+    const {resourceTable} = setup();
     it('passes scroll props', () => {
       expect(
-        dataTable
+        resourceTable
           .find(Navigation)
           .first()
           .prop('isScrolledFarthestLeft'),
       ).toBe(true);
       expect(
-        dataTable
+        resourceTable
           .find(Navigation)
           .first()
           .prop('isScrolledFarthestRight'),
