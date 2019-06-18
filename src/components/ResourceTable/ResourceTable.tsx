@@ -3,6 +3,7 @@ import isEqual from 'lodash/isEqual';
 import debounce from 'lodash/debounce';
 
 import Spinner from '../Spinner';
+import EmptySearchResult from '../EmptySearchResult';
 import {classNames} from '../../utilities/css';
 import {headerCell} from '../shared';
 import {withAppProvider, WithAppProviderProps} from '../AppProvider';
@@ -50,6 +51,11 @@ export interface Props {
   onSort?(headingIndex: number, direction: SortDirection): void;
   /** Overlays item list with a spinner while a background action is being performed */
   loading?: boolean;
+  /** Name of the resource, such as customers or products */
+  resourceName?: {
+    singular: string;
+    plural: string;
+  };
 }
 
 export class ResourceTable extends React.PureComponent<
@@ -119,6 +125,18 @@ export class ResourceTable extends React.PureComponent<
     this.handleResize();
   }
 
+  get resourceName() {
+    const {
+      polaris: {intl},
+    } = this.props;
+    return (
+      this.props.resourceName || {
+        singular: intl.translate('Polaris.ResourceList.defaultItemSingular'),
+        plural: intl.translate('Polaris.ResourceList.defaultItemPlural'),
+      }
+    );
+  }
+
   render() {
     const {
       columnContentTypes,
@@ -131,6 +149,10 @@ export class ResourceTable extends React.PureComponent<
       defaultSortDirection = 'ascending',
       initialSortColumnIndex = 0,
       loading,
+    } = this.props;
+
+    const {
+      polaris: {intl},
     } = this.props;
 
     const {
@@ -239,6 +261,20 @@ export class ResourceTable extends React.PureComponent<
       </div>
     );
 
+    const emptyResult = (
+      <div style={{paddingTop: 60, paddingBottom: 60}}>
+        <EmptySearchResult
+          title={intl.translate('Polaris.ResourceList.emptySearchResultTitle', {
+            resourceNamePlural: this.resourceName.plural,
+          })}
+          description={intl.translate(
+            'Polaris.ResourceList.emptySearchResultDescription',
+          )}
+          withIllustration
+        />
+      </div>
+    );
+
     return (
       <div className={wrapperClassName}>
         <Navigation
@@ -268,6 +304,7 @@ export class ResourceTable extends React.PureComponent<
               <tbody>{bodyMarkup}</tbody>
               {footerMarkup}
             </table>
+            {rows.length === 0 && emptyResult}
             {loading && loadingMarkup}
           </div>
         </div>
