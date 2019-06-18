@@ -1,9 +1,11 @@
-import React from 'react';
+import React, {useState} from 'react';
 import isEqual from 'lodash/isEqual';
 import debounce from 'lodash/debounce';
 
 import Spinner from '../Spinner';
 import EmptySearchResult from '../EmptySearchResult';
+import Checkbox from '../Checkbox';
+
 import {classNames} from '../../utilities/css';
 import {headerCell} from '../shared';
 import {withAppProvider, WithAppProviderProps} from '../AppProvider';
@@ -17,6 +19,7 @@ import styles from './ResourceTable.scss';
 export type CombinedProps = Props & WithAppProviderProps;
 export type TableRow = Props['headings'] | Props['rows'] | Props['totals'];
 export type TableData = string | number | React.ReactNode;
+export type TableHeadingData = string | React.ReactNode;
 
 export type ColumnContentType = 'text' | 'numeric';
 
@@ -24,7 +27,7 @@ export interface Props {
   /** List of data types, which determines content alignment for each column. Data types are "text," which aligns left, or "numeric," which aligns right. */
   columnContentTypes: ColumnContentType[];
   /** List of column headings. */
-  headings: string[];
+  headings: TableHeadingData[];
   /** List of numeric column totals, highlighted in the table’s header below column headings. Use empty strings as placeholders for columns with no total. */
   totals?: TableData[];
   /** Lists of data points which map to table body rows. */
@@ -56,6 +59,16 @@ export interface Props {
     singular: string;
     plural: string;
   };
+  /**
+   * There will be a special selection column in table if true.
+   * Default: false
+   */
+  selectable?: boolean;
+  /**
+   * this callback will be triggered if user select or unselect some row of table.
+   * @param selectedIndex Selected index of rows in table
+   */
+  onSelection?: (selectedRowIndex: number[]) => void;
 }
 
 export class ResourceTable extends React.PureComponent<
@@ -70,6 +83,8 @@ export class ResourceTable extends React.PureComponent<
     isScrolledFarthestLeft: true,
     isScrolledFarthestRight: false,
   };
+
+  private selections = new Array(this.props.rows.length).fill(false);
 
   private resourceTable = React.createRef<HTMLDivElement>();
   private scrollContainer = React.createRef<HTMLDivElement>();
@@ -137,12 +152,53 @@ export class ResourceTable extends React.PureComponent<
     );
   }
 
+  get injectColumnContentTypes() {
+    const {selectable, columnContentTypes} = this.props;
+    return [
+      ...(selectable ? ['text' as ColumnContentType] : []),
+      ...columnContentTypes,
+    ] as ColumnContentType[];
+  }
+
+  get injectHeadings() {
+    const {headings, selectable} = this.props;
+    return [...(selectable ? [<div key={Date.now()} />] : []), ...headings];
+  }
+
+  get injectRows() {
+    const {rows, selectable, onSelection} = this.props;
+    const {selections} = this;
+
+    const MemoCheckbox = ({rowIndex}: {rowIndex: number}) => {
+      const [checked, setChecked] = useState(false);
+      const handleOnChange = () => {
+        setChecked(!checked);
+        selections[rowIndex] = !selections[rowIndex];
+        if (onSelection) {
+          onSelection(
+            selections
+              .map((selected, index) => ({selected, index}))
+              .filter((i) => i.selected)
+              .map((i) => i.index),
+          );
+        }
+      };
+      return <Checkbox label="" checked={checked} onChange={handleOnChange} />;
+    };
+
+    return rows.map((cells, rowIndex) => {
+      return [
+        ...(selectable
+          ? [<MemoCheckbox key={Date.now()} rowIndex={rowIndex} />]
+          : []),
+        ...cells,
+      ];
+    });
+  }
+
   render() {
     const {
-      columnContentTypes,
-      headings,
       totals,
-      rows,
       truncate,
       footerContent,
       sortable,
@@ -190,7 +246,7 @@ export class ResourceTable extends React.PureComponent<
 
     const headingMarkup = (
       <tr>
-        {headings.map((heading, headingIndex) => {
+        {this.injectHeadings.map((heading, headingIndex) => {
           let sortableHeadingProps;
           const id = `heading-cell-${headingIndex}`;
 
@@ -217,7 +273,7 @@ export class ResourceTable extends React.PureComponent<
               testID={id}
               height={height}
               content={heading}
-              contentType={columnContentTypes[headingIndex]}
+              contentType={this.injectColumnContentTypes[headingIndex]}
               truncate={truncate}
               {...sortableHeadingProps}
             />
@@ -226,7 +282,7 @@ export class ResourceTable extends React.PureComponent<
       </tr>
     );
 
-    const bodyMarkup = rows.map(this.defaultRenderRow);
+    const bodyMarkup = this.injectRows.map(this.defaultRenderRow);
     const style = footerContent
       ? {marginBottom: `${heights[heights.length - 1]}px`}
       : undefined;
@@ -304,7 +360,7 @@ export class ResourceTable extends React.PureComponent<
               <tbody>{bodyMarkup}</tbody>
               {footerMarkup}
             </table>
-            {rows.length === 0 && emptyResult}
+            {this.injectRows.length === 0 && emptyResult}
             {loading && loadingMarkup}
           </div>
         </div>
@@ -470,12 +526,7 @@ export class ResourceTable extends React.PureComponent<
 
   private defaultRenderRow = (row: TableData[], index: number) => {
     const className = classNames(styles.TableRow);
-    const {
-      columnContentTypes,
-      totals,
-      footerContent,
-      truncate = false,
-    } = this.props;
+    const {totals, footerContent, truncate = false} = this.props;
     const {heights} = this.state;
     const bodyCellHeights = totals ? heights.slice(2) : heights.slice(1);
 
@@ -494,7 +545,7 @@ export class ResourceTable extends React.PureComponent<
               testID={id}
               height={bodyCellHeights[index]}
               content={content}
-              contentType={columnContentTypes[cellIndex]}
+              contentType={this.injectColumnContentTypes[cellIndex]}
               truncate={truncate}
             />
           );
