@@ -24,10 +24,6 @@ $breakpoint: 768px;
       justify-content: flex-end;
     }
   }
-
-  .ScrollContainer {
-    margin-left: rem($fixed-column-width);
-  }
 }
 
 .hasFooter {
@@ -58,28 +54,12 @@ $breakpoint: 768px;
 .ScrollContainer {
   overflow-x: auto;
   // account for a mysterious gap in Safari when not collapsed
-  margin-left: rem(140px);
   -webkit-overflow-scrolling: touch;
 }
 
 .Table {
   width: 100%;
   border-spacing: 0;
-
-  &::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: $fixed-column-width;
-    display: none;
-    width: rem(6px);
-    background: linear-gradient(
-      to right,
-      rgba(color('black'), 0.12),
-      rgba(color('black'), 0)
-    );
-  }
 }
 
 .TableRow {
