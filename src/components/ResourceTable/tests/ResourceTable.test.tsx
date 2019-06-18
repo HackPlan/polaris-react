@@ -165,7 +165,6 @@ describe('<ResourceTable />', () => {
       ];
 
       const tableData = {
-        fixedColumnWidth: 145,
         firstVisibleColumnIndex: 3,
         tableLeftVisibleEdge: 145,
         tableRightVisibleEdge: 551,
