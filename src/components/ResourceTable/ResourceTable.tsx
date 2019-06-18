@@ -86,9 +86,8 @@ export class ResourceTable extends React.PureComponent<
     preservedScrollPosition: {},
     isScrolledFarthestLeft: true,
     isScrolledFarthestRight: false,
+    selections: new Array(this.props.rows.length).fill(false),
   };
-
-  private selections = new Array(this.props.rows.length).fill(false);
 
   private resourceTable = React.createRef<HTMLDivElement>();
   private scrollContainer = React.createRef<HTMLDivElement>();
@@ -177,23 +176,30 @@ export class ResourceTable extends React.PureComponent<
 
   get injectRows() {
     const {rows, selectable, onSelection} = this.props;
-    const {selections} = this;
-
     const MemoCheckbox = ({rowIndex}: {rowIndex: number}) => {
-      const [checked, setChecked] = useState(false);
       const handleOnChange = () => {
-        setChecked(!checked);
-        selections[rowIndex] = !selections[rowIndex];
-        if (onSelection) {
-          onSelection(
-            selections
-              .map((selected, index) => ({selected, index}))
-              .filter((i) => i.selected)
-              .map((i) => i.index),
-          );
-        }
+        this.setState((prevState) => {
+          const selections = prevState.selections;
+          selections[rowIndex] = !selections[rowIndex];
+          if (onSelection) {
+            onSelection(
+              selections
+                .map((selected, index) => ({selected, index}))
+                .filter((i) => i.selected)
+                .map((i) => i.index),
+            );
+          }
+          return {selections};
+        });
+        this.forceUpdate();
       };
-      return <Checkbox label="" checked={checked} onChange={handleOnChange} />;
+      return (
+        <Checkbox
+          label=""
+          checked={this.state.selections[rowIndex]}
+          onChange={handleOnChange}
+        />
+      );
     };
 
     return rows.map((cells, rowIndex) => {
