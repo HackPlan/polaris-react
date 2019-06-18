@@ -1,7 +1,7 @@
-import DataTable from './DataTable';
+import ResourceTable from './ResourceTable';
 
 export {SortDirection} from './types';
 
-export {Props, TableRow, TableData, ColumnContentType} from './DataTable';
+export {Props, TableRow, TableData, ColumnContentType} from './ResourceTable';
 
-export default DataTable;
+export default ResourceTable;

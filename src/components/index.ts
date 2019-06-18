@@ -232,6 +232,15 @@ export {
 } from '../utilities/resource-list';
 
 export {
+  default as ResourceTable,
+  Props as ResourceTableProps,
+  TableData as ResourceTableData,
+  TableRow as ResourceTableRow,
+  SortDirection as ResourceTableSortDirection,
+  ColumnContentType as ResourceTableColumnContentType,
+} from './ResourceTable';
+
+export {
   default as ResourcePicker,
   Props as ResourcePickerProps,
 } from './ResourcePicker';

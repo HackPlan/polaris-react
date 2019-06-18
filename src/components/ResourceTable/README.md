@@ -1,28 +1,28 @@
 ---
-name: Data table
+name: Resource table
 category: Lists and tables
 keywords:
-  - DataTable
+  - ResourceTable
   - data
   - table
   - tabular
   - index
 ---
 
-# Data table
+# Resource table
 
-Data tables are used to organize and display all information from a data set. While a data visualization represents part of data set, a data table lets merchants view details from the entire set. This helps merchants compare and analyze the data.
+Resource tables are used to organize and display all information from a data set. While a data visualization represents part of data set, a resource table lets merchants view details from the entire set. This helps merchants compare and analyze the data.
 
 ---
 
 ## Examples
 
-### Default data table
+### Default resource table
 
 Use to present small amounts of data for merchants to view statically.
 
 ```jsx
-class DataTableExample extends React.Component {
+class ResourceTableExample extends React.Component {
   render() {
     const rows = [
       ['Emerald Silk Gown', '$875.00', 124689, 140, '$122,500.00'],
@@ -39,7 +39,7 @@ class DataTableExample extends React.Component {
     return (
       <Page title="Sales by product">
         <Card>
-          <DataTable
+          <ResourceTable
             columnContentTypes={[
               'text',
               'numeric',
@@ -64,12 +64,12 @@ class DataTableExample extends React.Component {
 }
 ```
 
-### Sortable data table
+### Sortable resource table
 
-Use when clarity of the table’s content is needed. For example, to note the number of rows currently shown in a data table with pagination.
+Use when clarity of the table’s content is needed. For example, to note the number of rows currently shown in a resource table with pagination.
 
 ```jsx
-class SortableDataTableExample extends React.Component {
+class SortableResourceTableExample extends React.Component {
   state = {
     sortedRows: null,
   };
@@ -105,7 +105,7 @@ class SortableDataTableExample extends React.Component {
     return (
       <Page title="Sales by product">
         <Card>
-          <DataTable
+          <ResourceTable
             columnContentTypes={[
               'text',
               'numeric',
@@ -134,12 +134,12 @@ class SortableDataTableExample extends React.Component {
 }
 ```
 
-### Data table with footer
+### Resource table with footer
 
-Use when clarity of the table’s content is needed. For example, to note the number of rows currently shown in a data table with pagination.
+Use when clarity of the table’s content is needed. For example, to note the number of rows currently shown in a resource table with pagination.
 
 ```jsx
-class DataTableFooterExample extends React.Component {
+class ResourceTableFooterExample extends React.Component {
   render() {
     const rows = [
       ['Emerald Silk Gown', '$875.00', 124689, 140, '$122,500.00'],
@@ -156,7 +156,7 @@ class DataTableFooterExample extends React.Component {
     return (
       <Page title="Sales by product">
         <Card>
-          <DataTable
+          <ResourceTable
             columnContentTypes={[
               'text',
               'numeric',
@@ -182,12 +182,12 @@ class DataTableFooterExample extends React.Component {
 }
 ```
 
-### Data table with row heading links
+### Resource table with row heading links
 
 Use to help merchants find relevant, finer grained data sets.
 
 ```jsx
-class DataTableLinkExample extends React.Component {
+class ResourceTableLinkExample extends React.Component {
   render() {
     const rows = [
       [
@@ -218,7 +218,7 @@ class DataTableLinkExample extends React.Component {
     return (
       <Page title="Sales by product">
         <Card>
-          <DataTable
+          <ResourceTable
             columnContentTypes={[
               'text',
               'numeric',
@@ -243,12 +243,12 @@ class DataTableLinkExample extends React.Component {
 }
 ```
 
-### Data table with all of its elements
+### Resource table with all of its elements
 
-Use as a broad example that includes most props available to data table.
+Use as a broad example that includes most props available to resource table.
 
 ```jsx
-class FullDataTableExample extends React.Component {
+class FullResourceTableExample extends React.Component {
   state = {
     sortedRows: null,
   };
@@ -300,7 +300,7 @@ class FullDataTableExample extends React.Component {
     return (
       <Page title="Sales by product">
         <Card>
-          <DataTable
+          <ResourceTable
             columnContentTypes={[
               'text',
               'numeric',
@@ -334,7 +334,7 @@ class FullDataTableExample extends React.Component {
 
 ## Best practices
 
-Data tables should:
+Resource tables should:
 
 - Show values across multiple categories and measures.
 - Allow for filtering and ordering when comparison is not a priority.
@@ -438,7 +438,7 @@ Use tables for layout. For a table-like layout that doesn’t use table HTML ele
 
 ### Keyboard support
 
-Sorting controls for the data table component are implemented with native HTML buttons.
+Sorting controls for the resource table component are implemented with native HTML buttons.
 
 - Give buttons keyboard focus with the <kbd>tab</kbd> key (or <kbd>shift</kbd> + <kbd>tab</kbd> when tabbing backwards)
 - Activate buttons with the <kbd>enter</kbd>/<kbd>return</kbd> and <kbd>space</kbd> keys

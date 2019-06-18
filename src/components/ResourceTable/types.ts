@@ -11,7 +11,7 @@ interface ScrollPosition {
   top?: number;
 }
 
-export interface DataTableState {
+export interface ResourceTableState {
   collapsed: boolean;
   columnVisibilityData: ColumnVisibilityData[];
   previousColumn?: ColumnVisibilityData;

@@ -7,7 +7,7 @@ import Button from '../../../Button';
 
 import {ColumnVisibilityData} from '../../types';
 
-import styles from '../../DataTable.scss';
+import styles from '../../ResourceTable.scss';
 
 export interface Props {
   columnVisibilityData: ColumnVisibilityData[];
