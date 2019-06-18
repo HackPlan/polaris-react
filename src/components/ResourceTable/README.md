@@ -56,6 +56,7 @@ class ResourceTableExample extends React.Component {
             ]}
             rows={rows}
             totals={['', '', '', 255, '$155,830.00']}
+            onRowClicked={(index) => { console.log(index) }}
           />
         </Card>
       </Page>

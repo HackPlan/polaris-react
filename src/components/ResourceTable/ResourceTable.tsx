@@ -69,6 +69,10 @@ export interface Props {
    * @param selectedIndex Selected index of rows in table
    */
   onSelection?: (selectedRowIndex: number[]) => void;
+  /**
+   * this callback will be triggered if user clicked a row.
+   */
+  onRowClicked?: (index: number) => void;
 }
 
 export class ResourceTable extends React.PureComponent<
@@ -158,6 +162,12 @@ export class ResourceTable extends React.PureComponent<
       ...(selectable ? ['text' as ColumnContentType] : []),
       ...columnContentTypes,
     ] as ColumnContentType[];
+  }
+
+  get injectTotals() {
+    const {selectable, totals} = this.props;
+    if (!totals) return undefined;
+    return [...(selectable ? [''] : []), ...totals] as ColumnContentType[];
   }
 
   get injectHeadings() {
@@ -525,20 +535,30 @@ export class ResourceTable extends React.PureComponent<
   };
 
   private defaultRenderRow = (row: TableData[], index: number) => {
-    const className = classNames(styles.TableRow);
-    const {totals, footerContent, truncate = false} = this.props;
+    const {totals, footerContent, truncate = false, onRowClicked} = this.props;
     const {heights} = this.state;
     const bodyCellHeights = totals ? heights.slice(2) : heights.slice(1);
+
+    const className = classNames(styles.TableRow);
+
+    const tableRowClickableClassName = onRowClicked
+      ? classNames(styles.TableRowClickable)
+      : '';
 
     if (footerContent) {
       bodyCellHeights.pop();
     }
 
     return (
-      <tr key={`row-${index}`} className={className}>
+      <tr
+        key={`row-${index}`}
+        className={[className, tableRowClickableClassName].join(' ')}
+        onClick={() => {
+          onRowClicked && onRowClicked(index);
+        }}
+      >
         {row.map((content: CellProps['content'], cellIndex: number) => {
           const id = `cell-${cellIndex}-row-${index}`;
-
           return (
             <Cell
               key={id}
