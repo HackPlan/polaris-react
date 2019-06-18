@@ -2,6 +2,7 @@ import React from 'react';
 import isEqual from 'lodash/isEqual';
 import debounce from 'lodash/debounce';
 
+import Spinner from '../Spinner';
 import {classNames} from '../../utilities/css';
 import {headerCell} from '../shared';
 import {withAppProvider, WithAppProviderProps} from '../AppProvider';
@@ -47,6 +48,8 @@ export interface Props {
   initialSortColumnIndex?: number;
   /** Callback fired on click or keypress of a sortable column heading. */
   onSort?(headingIndex: number, direction: SortDirection): void;
+  /** Overlays item list with a spinner while a background action is being performed */
+  loading?: boolean;
 }
 
 export class ResourceTable extends React.PureComponent<
@@ -127,6 +130,7 @@ export class ResourceTable extends React.PureComponent<
       sortable,
       defaultSortDirection = 'ascending',
       initialSortColumnIndex = 0,
+      loading,
     } = this.props;
 
     const {
@@ -205,6 +209,36 @@ export class ResourceTable extends React.PureComponent<
       ? {marginBottom: `${heights[heights.length - 1]}px`}
       : undefined;
 
+    const loadingMarkup = (
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          bottom: 0,
+          left: 0,
+          right: 0,
+          display: 'flex',
+          alignContent: 'center',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            bottom: 0,
+            left: 0,
+            right: 0,
+            display: 'flex',
+            justifyContent: 'center',
+            backgroundColor: 'rgba(255, 255, 255, 0.5)',
+          }}
+        />
+        <Spinner size="large" color="teal" />
+      </div>
+    );
+
     return (
       <div className={wrapperClassName}>
         <Navigation
@@ -234,6 +268,7 @@ export class ResourceTable extends React.PureComponent<
               <tbody>{bodyMarkup}</tbody>
               {footerMarkup}
             </table>
+            {loading && loadingMarkup}
           </div>
         </div>
       </div>
