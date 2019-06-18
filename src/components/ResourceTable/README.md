@@ -378,6 +378,43 @@ class ResourceTableExample extends React.Component {
 }
 ```
 
+### Empty state resource table
+
+Use to present small amounts of data for merchants to view statically.
+
+```jsx
+class ResourceTableExample extends React.Component {
+  render() {
+    const rows = [
+    ];
+
+    return (
+      <Page title="Sales by product">
+        <Card>
+          <ResourceTable
+            columnContentTypes={[
+              'text',
+              'numeric',
+              'numeric',
+              'numeric',
+              'numeric',
+            ]}
+            headings={[
+              'Product',
+              'Price',
+              'SKU Number',
+              'Net quantity',
+              'Net sales',
+            ]}
+            rows={rows}
+          />
+        </Card>
+      </Page>
+    );
+  }
+}
+```
+
 ---
 
 ## Best practices
