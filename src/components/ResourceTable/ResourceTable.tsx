@@ -300,15 +300,12 @@ export class ResourceTable extends React.PureComponent<
       const headerCells = table.querySelectorAll(
         headerCell.selector,
       ) as NodeListOf<HTMLElement>;
-      const collapsedHeaderCells = Array.from(headerCells).slice(1);
-      const fixedColumnWidth = headerCells[0].offsetWidth;
+      const collapsedHeaderCells = Array.from(headerCells);
       const firstVisibleColumnIndex = collapsedHeaderCells.length - 1;
-      const tableLeftVisibleEdge =
-        scrollContainer.scrollLeft + fixedColumnWidth;
+      const tableLeftVisibleEdge = scrollContainer.scrollLeft;
       const tableRightVisibleEdge =
         scrollContainer.scrollLeft + resourceTable.offsetWidth;
       const tableData = {
-        fixedColumnWidth,
         firstVisibleColumnIndex,
         tableLeftVisibleEdge,
         tableRightVisibleEdge,
@@ -321,10 +318,9 @@ export class ResourceTable extends React.PureComponent<
       const lastColumn = columnVisibilityData[columnVisibilityData.length - 1];
 
       return {
-        fixedColumnWidth,
         columnVisibilityData,
         ...getPrevAndCurrentColumns(tableData, columnVisibilityData),
-        isScrolledFarthestLeft: tableLeftVisibleEdge === fixedColumnWidth,
+        isScrolledFarthestLeft: tableLeftVisibleEdge === 0,
         isScrolledFarthestRight: lastColumn.rightEdge <= tableRightVisibleEdge,
       };
     }
@@ -343,21 +339,21 @@ export class ResourceTable extends React.PureComponent<
   };
 
   private navigateTable = (direction: string) => {
-    const {currentColumn, previousColumn, fixedColumnWidth} = this.state;
+    const {currentColumn, previousColumn} = this.state;
     const {
       scrollContainer: {current: scrollContainer},
     } = this;
 
     const handleScroll = () => {
-      if (!currentColumn || !previousColumn || !fixedColumnWidth) {
+      if (!currentColumn || !previousColumn) {
         return;
       }
 
       if (scrollContainer) {
         scrollContainer.scrollLeft =
           direction === 'right'
-            ? currentColumn.rightEdge - fixedColumnWidth
-            : previousColumn.leftEdge - fixedColumnWidth;
+            ? currentColumn.rightEdge
+            : previousColumn.leftEdge;
 
         requestAnimationFrame(() => {
           this.setState((prevState) => ({

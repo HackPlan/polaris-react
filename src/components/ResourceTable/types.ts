@@ -19,7 +19,6 @@ export interface ResourceTableState {
   sortedColumnIndex?: number;
   sortDirection?: SortDirection;
   heights: number[];
-  fixedColumnWidth?: number;
   preservedScrollPosition: ScrollPosition;
   isScrolledFarthestLeft?: boolean;
   isScrolledFarthestRight?: boolean;
