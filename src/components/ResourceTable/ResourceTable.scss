@@ -62,6 +62,10 @@ $breakpoint: 768px;
   border-spacing: 0;
 }
 
+.TableRowClickable {
+  cursor: pointer;
+}
+
 .TableRow {
   &:hover .Cell {
     @include breakpoint-after($breakpoint) {
