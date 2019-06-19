@@ -62,16 +62,24 @@ $breakpoint: 768px;
   border-spacing: 0;
 }
 
-.TableRowClickable {
-  cursor: pointer;
-}
-
 .TableRow {
-  &:hover .Cell {
+  &:hover {
     @include breakpoint-after($breakpoint) {
-      background: color('sky', 'lighter');
+      background-image: linear-gradient(rgba(223, 227, 232, 0.3), rgba(223, 227, 232, 0.3));
     }
   }
+}
+
+.TableRowClickable {
+  cursor: pointer;
+
+  &:active {
+    background-image: linear-gradient(rgba(179, 188, 245, 0.15), rgba(179, 188, 245, 0.15));
+  }
+}
+
+.TableRowSelected, .TableRowSelected:hover {
+  background-image: linear-gradient(rgba(179, 188, 245, 0.15), rgba(179, 188, 245, 0.15));
 }
 
 .TableFoot {

@@ -551,6 +551,10 @@ export class ResourceTable extends React.PureComponent<
       ? classNames(styles.TableRowClickable)
       : '';
 
+    const tableRowSelectableClassName = this.state.selections[index]
+      ? classNames(styles.TableRowSelected)
+      : '';
+
     if (footerContent) {
       bodyCellHeights.pop();
     }
@@ -558,7 +562,11 @@ export class ResourceTable extends React.PureComponent<
     return (
       <tr
         key={`row-${index}`}
-        className={[className, tableRowClickableClassName].join(' ')}
+        className={[
+          className,
+          tableRowClickableClassName,
+          tableRowSelectableClassName,
+        ].join(' ')}
         onClick={() => {
           onRowClicked && onRowClicked(index);
         }}
