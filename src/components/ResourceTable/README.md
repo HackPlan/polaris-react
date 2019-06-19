@@ -432,7 +432,7 @@ class ResourceTableExample extends React.Component {
         124518,
         32,
         '$14,240.00',
-        <Button size="slim" primary>Button</Button>,
+        <Button size="slim" primary onClick={(event) => { console.log('button clicked'); event.stopPropagation(); }}>Button</Button>,
       ],
     ];
 
@@ -459,6 +459,7 @@ class ResourceTableExample extends React.Component {
               'Actions',
             ]}
             rows={rows}
+            onRowClicked={(index) => { console.log(index) }}
           />
         </Card>
       </Page>

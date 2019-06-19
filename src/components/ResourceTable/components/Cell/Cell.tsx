@@ -24,6 +24,9 @@ export interface Props {
   sortDirection?: SortDirection;
   defaultSortDirection?: SortDirection;
   onSort?(): void;
+  onClick?: (
+    event: React.MouseEvent<HTMLTableDataCellElement, MouseEvent>,
+  ) => void;
 }
 
 export type CombinedProps = Props & WithAppProviderProps;
@@ -45,6 +48,7 @@ function Cell({
     intl: {translate},
   },
   onSort,
+  onClick,
 }: CombinedProps) {
   const numeric = contentType === 'numeric';
 
@@ -116,7 +120,7 @@ function Cell({
     header || fixed ? (
       headingMarkup
     ) : (
-      <td className={className} style={style}>
+      <td className={className} style={style} onClick={onClick}>
         {content}
       </td>
     );

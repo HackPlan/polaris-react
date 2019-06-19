@@ -567,9 +567,6 @@ export class ResourceTable extends React.PureComponent<
           tableRowClickableClassName,
           tableRowSelectableClassName,
         ].join(' ')}
-        onClick={() => {
-          onRowClicked && onRowClicked(index);
-        }}
       >
         {row.map((content: CellProps['content'], cellIndex: number) => {
           const id = `cell-${cellIndex}-row-${index}`;
@@ -581,6 +578,10 @@ export class ResourceTable extends React.PureComponent<
               content={content}
               contentType={this.injectColumnContentTypes[cellIndex]}
               truncate={truncate}
+              onClick={() => {
+                if (this.props.selectable && cellIndex === 0) return;
+                onRowClicked && onRowClicked(index);
+              }}
             />
           );
         })}
