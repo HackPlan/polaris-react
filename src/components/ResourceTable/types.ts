@@ -12,6 +12,7 @@ interface ScrollPosition {
 }
 
 export interface ResourceTableState {
+  selectMode: boolean;
   collapsed: boolean;
   columnVisibilityData: ColumnVisibilityData[];
   previousColumn?: ColumnVisibilityData;
@@ -24,3 +25,6 @@ export interface ResourceTableState {
   isScrolledFarthestRight?: boolean;
   selections: boolean[];
 }
+
+export const SELECT_ALL_ITEMS = 'All';
+export type SelectedIndex = number[] | 'All';
