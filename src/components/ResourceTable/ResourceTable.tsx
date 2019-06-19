@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import isEqual from 'lodash/isEqual';
 import debounce from 'lodash/debounce';
 
