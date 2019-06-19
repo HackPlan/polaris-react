@@ -185,3 +185,7 @@ $breakpoint: 768px;
   text-align: center;
   backface-visibility: hidden; // stop painting on scroll (due to positioning)
 }
+
+.HideCheckableButtonWrapper {
+  display: none;
+}

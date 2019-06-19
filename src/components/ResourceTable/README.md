@@ -460,6 +460,20 @@ class ResourceTableExample extends React.Component {
             ]}
             rows={rows}
             onRowClicked={(index) => { console.log(index) }}
+            bulkActions={[
+              {
+                content: 'Add tags',
+                onAction: () => console.log('Todo: implement bulk add tags'),
+              },
+              {
+                content: 'Remove tags',
+                onAction: () => console.log('Todo: implement bulk remove tags'),
+              },
+              {
+                content: 'Delete customers',
+                onAction: () => console.log('Todo: implement bulk delete'),
+              },
+            ]}
           />
         </Card>
       </Page>

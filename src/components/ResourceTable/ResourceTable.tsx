@@ -10,7 +10,14 @@ import {classNames} from '../../utilities/css';
 import {headerCell} from '../shared';
 import {withAppProvider, WithAppProviderProps} from '../AppProvider';
 import EventListener from '../EventListener';
-import {Cell, CellProps, Navigation} from './components';
+import {
+  Cell,
+  CellProps,
+  Navigation,
+  BulkActions,
+  BulkActionsProps,
+  CheckableButton,
+} from './components';
 import {measureColumn, getPrevAndCurrentColumns} from './utilities';
 
 import {ResourceTableState, SortDirection} from './types';
@@ -73,6 +80,8 @@ export interface Props {
    * this callback will be triggered if user clicked a row.
    */
   onRowClicked?: (index: number) => void;
+  /** Actions available on the currently selected items */
+  bulkActions?: BulkActionsProps['actions'];
 }
 
 export class ResourceTable extends React.PureComponent<
@@ -80,6 +89,7 @@ export class ResourceTable extends React.PureComponent<
   ResourceTableState
 > {
   state: ResourceTableState = {
+    selectMode: false,
     collapsed: false,
     columnVisibilityData: [],
     heights: [],
@@ -143,16 +153,12 @@ export class ResourceTable extends React.PureComponent<
     this.handleResize();
   }
 
-  get resourceName() {
-    const {
-      polaris: {intl},
-    } = this.props;
-    return (
-      this.props.resourceName || {
-        singular: intl.translate('Polaris.ResourceList.defaultItemSingular'),
-        plural: intl.translate('Polaris.ResourceList.defaultItemPlural'),
-      }
-    );
+  private get selectedIndexes() {
+    const {selections} = this.state;
+    return selections
+      .map((i, index) => ({index, selected: i}))
+      .filter((i) => i.selected)
+      .map((i) => i.index);
   }
 
   get injectColumnContentTypes() {
@@ -178,19 +184,24 @@ export class ResourceTable extends React.PureComponent<
     const {rows, selectable, onSelection} = this.props;
     const MemoCheckbox = ({rowIndex}: {rowIndex: number}) => {
       const handleOnChange = () => {
-        this.setState((prevState) => {
-          const selections = prevState.selections;
-          selections[rowIndex] = !selections[rowIndex];
-          if (onSelection) {
-            onSelection(
-              selections
-                .map((selected, index) => ({selected, index}))
-                .filter((i) => i.selected)
-                .map((i) => i.index),
-            );
-          }
-          return {selections};
-        });
+        this.setState(
+          (prevState) => {
+            const selections = prevState.selections;
+            selections[rowIndex] = !selections[rowIndex];
+            return {selections};
+          },
+          () => {
+            const selectedIndexes = this.selectedIndexes;
+            if (onSelection) {
+              onSelection(selectedIndexes);
+            }
+            if (selectedIndexes.length === 0) {
+              this.handleSelectMode(false);
+            } else if (selectedIndexes.length > 0) {
+              this.handleSelectMode(true);
+            }
+          },
+        );
         this.forceUpdate();
       };
       return (
@@ -212,6 +223,111 @@ export class ResourceTable extends React.PureComponent<
     });
   }
 
+  private get resourceName() {
+    return (
+      this.props.resourceName || {
+        singular: this.props.polaris.intl.translate(
+          'Polaris.ResourceList.defaultItemSingular',
+        ),
+        plural: this.props.polaris.intl.translate(
+          'Polaris.ResourceList.defaultItemPlural',
+        ),
+      }
+    );
+  }
+
+  private get bulkActionsLabel() {
+    const {
+      polaris: {intl},
+    } = this.props;
+    const {selections} = this.state;
+
+    const selectedCount = selections.filter((i) => i).length;
+
+    return intl.translate('Polaris.ResourceList.selected', {
+      selectedItemsCount: selectedCount,
+    });
+  }
+
+  private get bulkActionsAccessibilityLabel() {
+    const {
+      rows,
+      polaris: {intl},
+    } = this.props;
+    const {selections} = this.state;
+
+    const selectedCount = selections.filter((i) => i).length;
+    const totalItemsCount = rows.length;
+    const allSelected = selectedCount === totalItemsCount;
+
+    if (totalItemsCount === 1 && allSelected) {
+      return intl.translate(
+        'Polaris.ResourceList.a11yCheckboxDeselectAllSingle',
+        {resourceNameSingular: this.resourceName.singular},
+      );
+    } else if (totalItemsCount === 1) {
+      return intl.translate(
+        'Polaris.ResourceList.a11yCheckboxSelectAllSingle',
+        {
+          resourceNameSingular: this.resourceName.singular,
+        },
+      );
+    } else if (allSelected) {
+      return intl.translate(
+        'Polaris.ResourceList.a11yCheckboxDeselectAllMultiple',
+        {
+          itemsLength: rows.length,
+          resourceNamePlural: this.resourceName.plural,
+        },
+      );
+    } else {
+      return intl.translate(
+        'Polaris.ResourceList.a11yCheckboxSelectAllMultiple',
+        {
+          itemsLength: rows.length,
+          resourceNamePlural: this.resourceName.plural,
+        },
+      );
+    }
+  }
+
+  private get bulkSelectState(): boolean | 'indeterminate' {
+    const {rows} = this.props;
+    const selectedIndexes = this.selectedIndexes;
+    let selectState: boolean | 'indeterminate' = 'indeterminate';
+    if (
+      !selectedIndexes ||
+      (Array.isArray(selectedIndexes) && selectedIndexes.length === 0)
+    ) {
+      selectState = false;
+    } else if (selectedIndexes.length === rows.length) {
+      selectState = true;
+    }
+    return selectState;
+  }
+
+  private get headerTitle() {
+    const {
+      rows,
+      polaris: {intl},
+      loading,
+    } = this.props;
+    const resourceName = this.resourceName;
+
+    const rowsCount = rows.length;
+    const resource =
+      rowsCount === 1 && !loading ? resourceName.singular : resourceName.plural;
+
+    const headerTitleMarkup = loading
+      ? intl.translate('Polaris.ResourceList.loading', {resource})
+      : intl.translate('Polaris.ResourceList.showing', {
+          itemsCount: rowsCount,
+          resource,
+        });
+
+    return headerTitleMarkup;
+  }
+
   render() {
     const {
       totals,
@@ -221,6 +337,7 @@ export class ResourceTable extends React.PureComponent<
       defaultSortDirection = 'ascending',
       initialSortColumnIndex = 0,
       loading,
+      bulkActions,
     } = this.props;
 
     const {
@@ -235,6 +352,7 @@ export class ResourceTable extends React.PureComponent<
       sortDirection = defaultSortDirection,
       isScrolledFarthestLeft,
       isScrolledFarthestRight,
+      selectMode,
     } = this.state;
 
     const className = classNames(
@@ -347,15 +465,50 @@ export class ResourceTable extends React.PureComponent<
       </div>
     );
 
+    const checkableButtonMarkup = (
+      <div className={selectMode ? styles.HideCheckableButtonWrapper : ''}>
+        <CheckableButton
+          accessibilityLabel={this.bulkActionsAccessibilityLabel}
+          label={this.headerTitle}
+          onToggleAll={this.handleToggleAll}
+          plain
+          disabled={loading}
+        />
+      </div>
+    );
+
     return (
       <div className={wrapperClassName}>
-        <Navigation
-          columnVisibilityData={columnVisibilityData}
-          isScrolledFarthestLeft={isScrolledFarthestLeft}
-          isScrolledFarthestRight={isScrolledFarthestRight}
-          navigateTableLeft={this.navigateTable('left')}
-          navigateTableRight={this.navigateTable('right')}
-        />
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+          <div style={{marginLeft: 8}}>
+            {this.props.selectable && checkableButtonMarkup}
+            <BulkActions
+              label={this.bulkActionsLabel}
+              accessibilityLabel={this.bulkActionsAccessibilityLabel}
+              selected={this.bulkSelectState}
+              onToggleAll={this.handleToggleAll}
+              selectMode={selectMode}
+              onSelectModeToggle={this.handleSelectMode}
+              actions={bulkActions}
+              disabled={loading}
+            />
+            <EventListener event="resize" handler={this.handleResize} />
+          </div>
+          {this.props.selectable && <div style={{height: 62}} />}
+          <Navigation
+            columnVisibilityData={columnVisibilityData}
+            isScrolledFarthestLeft={isScrolledFarthestLeft}
+            isScrolledFarthestRight={isScrolledFarthestRight}
+            navigateTableLeft={this.navigateTable('left')}
+            navigateTableRight={this.navigateTable('right')}
+          />
+        </div>
         <div className={className} ref={this.resourceTable}>
           <div
             className={styles.ScrollContainer}
@@ -383,6 +536,35 @@ export class ResourceTable extends React.PureComponent<
       </div>
     );
   }
+
+  private handleSelectMode = (selectMode: boolean) => {
+    this.setState({selectMode});
+  };
+
+  private handleToggleAll = () => {
+    const {onSelection, rows} = this.props;
+
+    this.setState(
+      (prevState) => ({
+        selections: prevState.selections.map(() => {
+          const selectAll = this.selectedIndexes.length === rows.length;
+
+          if (selectAll) {
+            this.handleSelectMode(false);
+          } else {
+            this.handleSelectMode(true);
+          }
+
+          return !selectAll;
+        }),
+      }),
+      () => {
+        if (onSelection) {
+          onSelection(this.selectedIndexes);
+        }
+      },
+    );
+  };
 
   private tallestCellHeights = () => {
     const {footerContent, truncate} = this.props;
