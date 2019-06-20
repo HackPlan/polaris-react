@@ -482,6 +482,7 @@ class ResourceTableExample extends React.Component {
                 onAction: () => console.log('Todo: implement bulk delete'),
               },
             ]}
+            headerNode={<Button>Button</Button>}
           />
         </Card>
       </Page>
