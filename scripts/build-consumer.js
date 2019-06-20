@@ -17,7 +17,7 @@ if (!projectDir) {
 
 const projectPolarisDir = resolve(
   root,
-  `../${projectDir}/node_modules/@shopify/polaris`,
+  `../${projectDir}/node_modules/@hackplan/polaris`,
 );
 const files = [
   'package.json',
