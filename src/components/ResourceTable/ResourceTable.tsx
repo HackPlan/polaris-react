@@ -1,6 +1,7 @@
 import React from 'react';
 import isEqual from 'lodash/isEqual';
 import debounce from 'lodash/debounce';
+import range from 'lodash/range';
 
 import Spinner from '../Spinner';
 import EmptySearchResult from '../EmptySearchResult';
@@ -71,11 +72,13 @@ export interface Props {
    * Default: false
    */
   selectable?: boolean;
+  /** Collection of IDs for the currently selected indexes */
+  selectedIndexes?: number[];
   /**
    * this callback will be triggered if user select or unselect some row of table.
-   * @param selectedIndex Selected index of rows in table
+   * @param selectedIndexes Selected indexes of rows in table
    */
-  onSelection?: (selectedRowIndex: number[]) => void;
+  onSelection?: (selectedRowIndexes: number[]) => void;
   /**
    * this callback will be triggered if user clicked a row.
    */
@@ -96,7 +99,6 @@ export class ResourceTable extends React.PureComponent<
     preservedScrollPosition: {},
     isScrolledFarthestLeft: true,
     isScrolledFarthestRight: false,
-    selections: new Array(this.props.rows.length).fill(false),
   };
 
   private resourceTable = React.createRef<HTMLDivElement>();
@@ -153,14 +155,6 @@ export class ResourceTable extends React.PureComponent<
     this.handleResize();
   }
 
-  private get selectedIndexes() {
-    const {selections} = this.state;
-    return selections
-      .map((i, index) => ({index, selected: i}))
-      .filter((i) => i.selected)
-      .map((i) => i.index);
-  }
-
   get injectColumnContentTypes() {
     const {selectable, columnContentTypes} = this.props;
     return [
@@ -181,33 +175,29 @@ export class ResourceTable extends React.PureComponent<
   }
 
   get injectRows() {
-    const {rows, selectable, onSelection} = this.props;
+    const {rows, selectable, selectedIndexes = [], onSelection} = this.props;
     const MemoCheckbox = ({rowIndex}: {rowIndex: number}) => {
       const handleOnChange = () => {
-        this.setState(
-          (prevState) => {
-            const selections = prevState.selections;
-            selections[rowIndex] = !selections[rowIndex];
-            return {selections};
-          },
-          () => {
-            const selectedIndexes = this.selectedIndexes;
-            if (onSelection) {
-              onSelection(selectedIndexes);
-            }
-            if (selectedIndexes.length === 0) {
-              this.handleSelectMode(false);
-            } else if (selectedIndexes.length > 0) {
-              this.handleSelectMode(true);
-            }
-          },
-        );
-        this.forceUpdate();
+        const selectedIndexesSet = new Set(selectedIndexes);
+        if (selectedIndexesSet.has(rowIndex)) {
+          selectedIndexesSet.delete(rowIndex);
+        } else {
+          selectedIndexesSet.add(rowIndex);
+        }
+        const newSelectedIndexes = [...selectedIndexesSet].sort();
+        if (onSelection) {
+          onSelection(newSelectedIndexes);
+        }
+        if (newSelectedIndexes.length === 0) {
+          this.handleSelectMode(false);
+        } else if (newSelectedIndexes.length > 0) {
+          this.handleSelectMode(true);
+        }
       };
       return (
         <Checkbox
           label=""
-          checked={this.state.selections[rowIndex]}
+          checked={selectedIndexes && selectedIndexes.includes(rowIndex)}
           onChange={handleOnChange}
         />
       );
@@ -238,11 +228,11 @@ export class ResourceTable extends React.PureComponent<
 
   private get bulkActionsLabel() {
     const {
+      selectedIndexes = [],
       polaris: {intl},
     } = this.props;
-    const {selections} = this.state;
 
-    const selectedCount = selections.filter((i) => i).length;
+    const selectedCount = selectedIndexes.length;
 
     return intl.translate('Polaris.ResourceList.selected', {
       selectedItemsCount: selectedCount,
@@ -252,11 +242,11 @@ export class ResourceTable extends React.PureComponent<
   private get bulkActionsAccessibilityLabel() {
     const {
       rows,
+      selectedIndexes = [],
       polaris: {intl},
     } = this.props;
-    const {selections} = this.state;
 
-    const selectedCount = selections.filter((i) => i).length;
+    const selectedCount = selectedIndexes.length;
     const totalItemsCount = rows.length;
     const allSelected = selectedCount === totalItemsCount;
 
@@ -292,8 +282,7 @@ export class ResourceTable extends React.PureComponent<
   }
 
   private get bulkSelectState(): boolean | 'indeterminate' {
-    const {rows} = this.props;
-    const selectedIndexes = this.selectedIndexes;
+    const {rows, selectedIndexes = []} = this.props;
     let selectState: boolean | 'indeterminate' = 'indeterminate';
     if (
       !selectedIndexes ||
@@ -544,28 +533,20 @@ export class ResourceTable extends React.PureComponent<
   };
 
   private handleToggleAll = () => {
-    const {onSelection, rows} = this.props;
+    const {onSelection, rows, selectedIndexes = []} = this.props;
 
-    this.setState(
-      (prevState) => ({
-        selections: prevState.selections.map(() => {
-          const selectAll = this.selectedIndexes.length === rows.length;
+    const shouldSelectAll = selectedIndexes.length !== rows.length;
+    const newSelectedIndexes = shouldSelectAll ? range(rows.length) : [];
 
-          if (selectAll) {
-            this.handleSelectMode(false);
-          } else {
-            this.handleSelectMode(true);
-          }
+    if (newSelectedIndexes.length === 0) {
+      this.handleSelectMode(false);
+    } else if (newSelectedIndexes.length > 0) {
+      this.handleSelectMode(true);
+    }
 
-          return !selectAll;
-        }),
-      }),
-      () => {
-        if (onSelection) {
-          onSelection(this.selectedIndexes);
-        }
-      },
-    );
+    if (onSelection) {
+      onSelection(newSelectedIndexes);
+    }
   };
 
   private tallestCellHeights = () => {
@@ -725,7 +706,13 @@ export class ResourceTable extends React.PureComponent<
   };
 
   private defaultRenderRow = (row: TableData[], index: number) => {
-    const {totals, footerContent, truncate = false, onRowClicked} = this.props;
+    const {
+      totals,
+      footerContent,
+      truncate = false,
+      onRowClicked,
+      selectedIndexes = [],
+    } = this.props;
     const {heights} = this.state;
     const bodyCellHeights = totals ? heights.slice(2) : heights.slice(1);
 
@@ -735,7 +722,7 @@ export class ResourceTable extends React.PureComponent<
       ? classNames(styles.TableRowClickable)
       : '';
 
-    const tableRowSelectableClassName = this.state.selections[index]
+    const tableRowSelectableClassName = selectedIndexes.includes(index)
       ? classNames(styles.TableRowSelected)
       : '';
 
