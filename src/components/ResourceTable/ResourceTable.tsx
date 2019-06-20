@@ -85,6 +85,10 @@ export interface Props {
   onRowClicked?: (index: number) => void;
   /** Actions available on the currently selected items */
   bulkActions?: BulkActionsProps['actions'];
+  /**
+   * this react node will inject into table BulkActions and Navigation Stack section
+   */
+  headerNode?: React.ReactNode;
 }
 
 export class ResourceTable extends React.PureComponent<
@@ -328,6 +332,7 @@ export class ResourceTable extends React.PureComponent<
       loading,
       bulkActions,
       rows,
+      headerNode,
     } = this.props;
 
     const {
@@ -491,13 +496,24 @@ export class ResourceTable extends React.PureComponent<
             <EventListener event="resize" handler={this.handleResize} />
           </div>
           {this.props.selectable && <div style={{height: 62}} />}
-          <Navigation
-            columnVisibilityData={columnVisibilityData}
-            isScrolledFarthestLeft={isScrolledFarthestLeft}
-            isScrolledFarthestRight={isScrolledFarthestRight}
-            navigateTableLeft={this.navigateTable('left')}
-            navigateTableRight={this.navigateTable('right')}
-          />
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}
+          >
+            {this.props.selectable && (
+              <div style={{marginRight: 16}}>{headerNode}</div>
+            )}
+            <Navigation
+              columnVisibilityData={columnVisibilityData}
+              isScrolledFarthestLeft={isScrolledFarthestLeft}
+              isScrolledFarthestRight={isScrolledFarthestRight}
+              navigateTableLeft={this.navigateTable('left')}
+              navigateTableRight={this.navigateTable('right')}
+            />
+          </div>
         </div>
         <div className={className} ref={this.resourceTable}>
           <div
