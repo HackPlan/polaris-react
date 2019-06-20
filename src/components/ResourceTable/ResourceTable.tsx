@@ -338,6 +338,7 @@ export class ResourceTable extends React.PureComponent<
       initialSortColumnIndex = 0,
       loading,
       bulkActions,
+      rows,
     } = this.props;
 
     const {
@@ -451,7 +452,7 @@ export class ResourceTable extends React.PureComponent<
       </div>
     );
 
-    const emptyResult = (
+    const emptyResultMarkup = (
       <div style={{paddingTop: 60, paddingBottom: 60}}>
         <EmptySearchResult
           title={intl.translate('Polaris.ResourceList.emptySearchResultTitle', {
@@ -529,7 +530,8 @@ export class ResourceTable extends React.PureComponent<
               <tbody>{bodyMarkup}</tbody>
               {footerMarkup}
             </table>
-            {this.injectRows.length === 0 && emptyResult}
+            {!loading && rows.length === 0 && emptyResultMarkup}
+            {loading && rows.length === 0 && <div style={{height: 380}} />}
             {loading && loadingMarkup}
           </div>
         </div>
