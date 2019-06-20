@@ -23,7 +23,6 @@ export interface ResourceTableState {
   preservedScrollPosition: ScrollPosition;
   isScrolledFarthestLeft?: boolean;
   isScrolledFarthestRight?: boolean;
-  selections: boolean[];
 }
 
 export const SELECT_ALL_ITEMS = 'All';

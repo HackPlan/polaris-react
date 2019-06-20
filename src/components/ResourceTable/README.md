@@ -422,8 +422,9 @@ Use to present small amounts of data for merchants to view statically.
 
 ```jsx
 class ResourceTableExample extends React.Component {
-  render() {
-    const rows = [
+  state = {
+    selectedIndexes: [],
+    rows: [
       ['Emerald Silk Gown', '$875.00', 124689, 140, '$122,500.00', <Button size="slim" primary>Button</Button>],
       ['Mauve Cashmere Scarf', '$230.00', 124533, 83, '$19,090.00', <Button size="slim" primary>Button</Button>],
       [
@@ -434,14 +435,21 @@ class ResourceTableExample extends React.Component {
         '$14,240.00',
         <Button size="slim" primary onClick={(event) => { console.log('button clicked'); event.stopPropagation(); }}>Button</Button>,
       ],
-    ];
+    ]
+  }
+
+  render() {
 
     return (
       <Page title="Sales by product">
         <Card>
           <ResourceTable
             selectable={true}
-            onSelection={(selectedIndex) => { console.log(selectedIndex) }}
+            selectedIndexes={this.state.selectedIndexes}
+            onSelection={(selectedIndexes) => {
+              this.setState({ selectedIndexes })
+              console.log(selectedIndexes)
+            }}
             columnContentTypes={[
               'text',
               'numeric',
@@ -458,7 +466,7 @@ class ResourceTableExample extends React.Component {
               'Net sales',
               'Actions',
             ]}
-            rows={rows}
+            rows={this.state.rows}
             onRowClicked={(index) => { console.log(index) }}
             bulkActions={[
               {
