@@ -109,6 +109,7 @@
     "@types/enzyme-adapter-react-16": "^1.0.5",
     "@types/lodash": "^4.14.108",
     "@types/node": "^11.13.8",
+    "@types/react-beautiful-dnd": "^11.0.2",
     "archiver": "^3.0.0",
     "babel-core": "7.0.0-bridge.0",
     "babel-loader": "^8.0.5",
@@ -193,6 +194,8 @@
     "@types/react-transition-group": "^2.0.7",
     "hoist-non-react-statics": "^3.3.0",
     "lodash": "^4.17.4",
+    "react-beautiful-dnd": "^11.0.4",
+    "react-transition-group": "^2.4.0",
     "tslib": "^1.9.3"
   }
 }
