@@ -2,6 +2,13 @@ import React from 'react';
 
 import debounce from 'lodash/debounce';
 import {EnableSelectionMinor} from '@shopify/polaris-icons';
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+  DropResult,
+  ResponderProvided,
+} from 'react-beautiful-dnd';
 
 import {classNames} from '../../utilities/css';
 import Button from '../Button';
@@ -82,6 +89,8 @@ export interface Props {
   idForItem?(item: any, index: number): string;
   /** Function to resolve an id from a item */
   resolveItemId?(item: any): string;
+  /** items of ResourceList will be allowed to drag and drop if this prop specified */
+  onDragEnd(result: DropResult, provided: ResponderProvided): void;
 }
 
 type CombinedProps = Props & WithAppProviderProps;
@@ -371,6 +380,7 @@ class ResourceList extends React.Component<CombinedProps, State> {
       resourceName = this.defaultResourceName,
       onSortChange,
       polaris: {intl},
+      onDragEnd,
     } = this.props;
     const {selectMode, loadingPosition, smallScreen} = this.state;
 
@@ -536,15 +546,24 @@ class ResourceList extends React.Component<CombinedProps, State> {
     );
 
     const listMarkup = this.itemsExist() ? (
-      <ul
-        className={resourceListClassName}
-        ref={this.listRef}
-        aria-live="polite"
-        aria-busy={loading}
-      >
-        {loadingOverlay}
-        {items.map(this.renderItem)}
-      </ul>
+      <DragDropContext onDragEnd={onDragEnd}>
+        <ul
+          className={resourceListClassName}
+          ref={this.listRef}
+          aria-live="polite"
+          aria-busy={loading}
+        >
+          {loadingOverlay}
+          <Droppable droppableId="droppable">
+            {(provided) => (
+              <div {...provided.droppableProps} ref={provided.innerRef}>
+                {items.map(this.renderItem)}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </ul>
+      </DragDropContext>
     ) : (
       emptyStateMarkup
     );
@@ -621,13 +640,29 @@ class ResourceList extends React.Component<CombinedProps, State> {
   };
 
   private renderItem = (item: any, index: number) => {
-    const {renderItem, idForItem = defaultIdForItem} = this.props;
+    const {renderItem, idForItem = defaultIdForItem, onDragEnd} = this.props;
     const id = idForItem(item, index);
 
     return (
-      <li key={id} className={styles.ItemWrapper}>
-        {renderItem(item, id, index)}
-      </li>
+      <Draggable
+        isDragDisabled={!onDragEnd}
+        draggableId={id}
+        index={index}
+        key={id}
+      >
+        {(provided) => {
+          return (
+            <li
+              ref={provided.innerRef}
+              className={styles.ItemWrapper}
+              {...provided.draggableProps}
+              {...provided.dragHandleProps}
+            >
+              {renderItem(item, id, index)}
+            </li>
+          );
+        }}
+      </Draggable>
     );
   };
 

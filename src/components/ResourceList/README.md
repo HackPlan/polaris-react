@@ -154,6 +154,72 @@ class ResourceListExample extends React.Component {
 }
 ```
 
+### Simple resource list with drag and drop
+
+A resource list with simple items and no bulk actions, sorting, or filtering. See the [case study below](#study) for implementation details.
+
+```jsx
+class ResourceListExample extends React.Component {
+  state = {
+    items: [
+      {
+        id: 341,
+        url: '',
+        name: 'Mae Jemison',
+        location: 'Decatur, USA',
+      },
+      {
+        id: 256,
+        url: '',
+        name: 'Ellen Ochoa',
+        location: 'Los Angeles, USA',
+      },
+    ]
+  }
+
+  render() {
+    return (
+      <Card>
+        <ResourceList
+          resourceName={{singular: 'customer', plural: 'customers'}}
+          items={this.state.items}
+          renderItem={(item, xxx, index) => {
+            const {id, url, name, location} = item;
+            const media = <Avatar customer size="medium" name={name} />;
+
+            return (
+              <ResourceList.Item
+                id={id}
+                url={url}
+                media={media}
+                accessibilityLabel={`View details for ${name}`}
+              >
+                <h3>
+                  <TextStyle variation="strong">{name}</TextStyle>
+                </h3>
+                <div>{location}</div>
+              </ResourceList.Item>
+            );
+          }}
+          onDragEnd={(result) => {
+            // dropped outside the list
+            if (!result.destination) {
+              return;
+            }
+            const {items} = this.state;
+            items.splice(result.destination.index, 0, items.splice(result.source.index, 1)[0]);
+
+            this.setState({
+              items
+            });
+          }}
+        />
+      </Card>
+    )
+  }
+}
+```
+
 ### Resource list with bulk actions
 
 Allows merchants to select items and perform an action on the selection.
