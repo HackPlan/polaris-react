@@ -131,7 +131,7 @@ $resource-list-item-variables: (
 
 .Owned {
   display: flex;
-  align-self: flex-start;
+  align-self: center;
 }
 
 // Item handle
@@ -140,7 +140,7 @@ $resource-list-item-variables: (
   min-height: resource-list-item(min-height);
   justify-content: center;
   align-items: center;
-  margin: (-1 * resource-list-item(padding)) spacing(extra-tight)
+  margin: -0.9rem spacing(extra-tight)
     (-1 * resource-list-item(padding)) resource-list-item(control-indent);
   display: flex;
 
