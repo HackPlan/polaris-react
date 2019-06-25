@@ -99,7 +99,7 @@ export interface Props {
   /**
    * items of ResourceList will be allowed to drag and drop if this prop specified
    */
-  onDragEnd(result: DropResult, provided: ResponderProvided): void;
+  onDragEnd?(result: DropResult, provided: ResponderProvided): void;
 }
 
 const IsDraggingContext = React.createContext<boolean>(false);
