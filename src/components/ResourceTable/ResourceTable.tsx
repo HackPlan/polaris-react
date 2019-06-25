@@ -2,6 +2,13 @@ import React from 'react';
 import isEqual from 'lodash/isEqual';
 import debounce from 'lodash/debounce';
 import range from 'lodash/range';
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+  DropResult,
+  ResponderProvided,
+} from 'react-beautiful-dnd';
 
 import Spinner from '../Spinner';
 import EmptySearchResult from '../EmptySearchResult';
@@ -89,7 +96,13 @@ export interface Props {
    * this react node will inject into table BulkActions and Navigation Stack section
    */
   headerNode?: React.ReactNode;
+  /**
+   * items of ResourceList will be allowed to drag and drop if this prop specified
+   */
+  onDragEnd(result: DropResult, provided: ResponderProvided): void;
 }
+
+const IsDraggingContext = React.createContext<boolean>(false);
 
 export class ResourceTable extends React.PureComponent<
   CombinedProps,
@@ -103,6 +116,8 @@ export class ResourceTable extends React.PureComponent<
     preservedScrollPosition: {},
     isScrolledFarthestLeft: true,
     isScrolledFarthestRight: false,
+    isDragging: false,
+    rowIds: [],
   };
 
   private resourceTable = React.createRef<HTMLDivElement>();
@@ -150,6 +165,7 @@ export class ResourceTable extends React.PureComponent<
     } else {
       this.handleResize();
     }
+    this.generateRowIds();
   }
 
   componentDidUpdate(prevProps: Props) {
@@ -157,6 +173,13 @@ export class ResourceTable extends React.PureComponent<
       return;
     }
     this.handleResize();
+    this.generateRowIds();
+  }
+
+  generateRowIds() {
+    this.setState({
+      rowIds: this.props.rows.map(() => Math.random().toString()),
+    });
   }
 
   get injectColumnContentTypes() {
@@ -320,6 +343,19 @@ export class ResourceTable extends React.PureComponent<
 
     return headerTitleMarkup;
   }
+
+  onBeforeDragStart = () => {
+    this.setState({
+      isDragging: true,
+    });
+  };
+
+  onDragEnd = (result: DropResult, provided: ResponderProvided) => {
+    this.setState({
+      isDragging: false,
+    });
+    this.props.onDragEnd && this.props.onDragEnd(result, provided);
+  };
 
   render() {
     const {
@@ -527,14 +563,31 @@ export class ResourceTable extends React.PureComponent<
               event="scroll"
               handler={this.scrollListener}
             />
-            <table className={styles.Table} ref={this.table}>
-              <thead>
-                {headingMarkup}
-                {totalsMarkup}
-              </thead>
-              <tbody>{bodyMarkup}</tbody>
-              {footerMarkup}
-            </table>
+            <IsDraggingContext.Provider value={this.state.isDragging}>
+              <DragDropContext
+                onBeforeDragStart={this.onBeforeDragStart}
+                onDragEnd={this.onDragEnd}
+              >
+                <table className={styles.Table} ref={this.table}>
+                  <thead>
+                    {headingMarkup}
+                    {totalsMarkup}
+                  </thead>
+                  <Droppable droppableId="droppable">
+                    {(provided) => (
+                      <tbody
+                        {...provided.droppableProps}
+                        ref={provided.innerRef}
+                      >
+                        {bodyMarkup}
+                        {provided.placeholder}
+                      </tbody>
+                    )}
+                  </Droppable>
+                  {footerMarkup}
+                </table>
+              </DragDropContext>
+            </IsDraggingContext.Provider>
             {!loading && rows.length === 0 && emptyResultMarkup}
             {loading && rows.length === 0 && <div style={{height: 380}} />}
             {loading && loadingMarkup}
@@ -728,6 +781,7 @@ export class ResourceTable extends React.PureComponent<
       truncate = false,
       onRowClicked,
       selectedIndexes = [],
+      onDragEnd,
     } = this.props;
     const {heights} = this.state;
     const bodyCellHeights = totals ? heights.slice(2) : heights.slice(1);
@@ -746,33 +800,58 @@ export class ResourceTable extends React.PureComponent<
       bodyCellHeights.pop();
     }
 
+    const draggableId = this.state.rowIds[index] || Math.random().toString();
     return (
-      <tr
-        key={`row-${index}`}
-        className={[
-          className,
-          tableRowClickableClassName,
-          tableRowSelectableClassName,
-        ].join(' ')}
+      <Draggable
+        isDragDisabled={!onDragEnd}
+        draggableId={draggableId}
+        index={index}
+        key={draggableId}
       >
-        {row.map((content: CellProps['content'], cellIndex: number) => {
-          const id = `cell-${cellIndex}-row-${index}`;
+        {(provided) => {
           return (
-            <Cell
-              key={id}
-              testID={id}
-              height={bodyCellHeights[index]}
-              content={content}
-              contentType={this.injectColumnContentTypes[cellIndex]}
-              truncate={truncate}
-              onClick={() => {
-                if (this.props.selectable && cellIndex === 0) return;
-                onRowClicked && onRowClicked(index);
-              }}
-            />
+            <tr
+              ref={provided.innerRef}
+              key={`row-${index}`}
+              className={[
+                className,
+                tableRowClickableClassName,
+                tableRowSelectableClassName,
+              ].join(' ')}
+              {...provided.draggableProps}
+              {...provided.dragHandleProps}
+            >
+              <IsDraggingContext.Consumer>
+                {(isDragging: boolean) => {
+                  return row.map(
+                    (content: CellProps['content'], cellIndex: number) => {
+                      const id = `cell-${cellIndex}-row-${index}`;
+                      return (
+                        <Cell
+                          key={id}
+                          testID={id}
+                          height={bodyCellHeights[index]}
+                          content={content}
+                          contentType={this.injectColumnContentTypes[cellIndex]}
+                          truncate={truncate}
+                          onClick={() => {
+                            if (this.props.selectable && cellIndex === 0) {
+                              return;
+                            }
+                            onRowClicked && onRowClicked(index);
+                          }}
+                          isDragOccurring={isDragging}
+                        />
+                      );
+                    },
+                  );
+                }}
+              </IsDraggingContext.Consumer>
+              {}
+            </tr>
           );
-        })}
-      </tr>
+        }}
+      </Draggable>
     );
   };
 

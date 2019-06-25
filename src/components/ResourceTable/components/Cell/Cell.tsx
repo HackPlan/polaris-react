@@ -27,105 +27,176 @@ export interface Props {
   onClick?: (
     event: React.MouseEvent<HTMLTableDataCellElement, MouseEvent>,
   ) => void;
+  isDragOccurring?: boolean;
 }
 
 export type CombinedProps = Props & WithAppProviderProps;
 
-function Cell({
-  height,
-  content,
-  contentType,
-  fixed,
-  truncate,
-  header,
-  total,
-  footer,
-  sorted,
-  sortable,
-  sortDirection,
-  defaultSortDirection,
-  polaris: {
-    intl: {translate},
-  },
-  onSort,
-  onClick,
-}: CombinedProps) {
-  const numeric = contentType === 'numeric';
+export interface State {}
 
-  const className = classNames(
-    styles.Cell,
-    fixed && styles['Cell-fixed'],
-    fixed && truncate && styles['Cell-truncated'],
-    header && styles['Cell-header'],
-    total && styles['Cell-total'],
-    footer && styles['Cell-footer'],
-    numeric && styles['Cell-numeric'],
-    sortable && styles['Cell-sortable'],
-    sorted && styles['Cell-sorted'],
-  );
+export interface Snapshot {
+  width: number;
+  height: number;
+}
 
-  const headerClassName = classNames(
-    header && styles.Heading,
-    header && contentType === 'text' && styles['Heading-left'],
-  );
+export class Cell extends React.Component<CombinedProps, State, Snapshot> {
+  tdRef: HTMLElement | null;
 
-  const iconClassName = classNames(sortable && styles.Icon);
+  state: State = {};
 
-  const style = {
-    height: height ? `${height}px` : undefined,
-  };
+  getSnapshotBeforeUpdate(prevProps: CombinedProps): Snapshot | null {
+    if (!this.tdRef) {
+      return null;
+    }
 
-  const direction = sorted ? sortDirection : defaultSortDirection;
-  const source = direction === 'ascending' ? CaretUpMinor : CaretDownMinor;
-  const oppositeDirection =
-    sortDirection === 'ascending' ? 'descending' : 'ascending';
+    const isDragStarting: boolean =
+      Boolean(this.props.isDragOccurring) && !prevProps.isDragOccurring;
 
-  const sortAccessibilityLabel = translate(
-    'Polaris.DataTable.sortAccessibilityLabel',
-    {direction: sorted ? oppositeDirection : direction},
-  );
+    if (!isDragStarting) {
+      return null;
+    }
 
-  const iconMarkup = (
-    <span className={iconClassName}>
-      <Icon source={source} accessibilityLabel={sortAccessibilityLabel} />
-    </span>
-  );
+    const {width, height} = this.tdRef.getBoundingClientRect();
+    return {width, height};
+  }
 
-  const sortableHeadingContent = (
-    <button className={headerClassName} onClick={onSort}>
-      {iconMarkup}
-      {content}
-    </button>
-  );
+  componentDidUpdate(
+    _prevProps: CombinedProps,
+    _prevState: State,
+    snapshot?: Snapshot,
+  ) {
+    const ref = this.tdRef;
+    if (!ref) {
+      return;
+    }
 
-  const columnHeadingContent = sortable ? sortableHeadingContent : content;
+    if (snapshot) {
+      if (parseInt(ref.style.width || '0', 10) === snapshot.width) {
+        return;
+      }
+      ref.style.width = `${snapshot.width}px`;
+      ref.style.height = `${snapshot.height}px`;
+    }
 
-  const headingMarkup = header ? (
-    <th
-      {...headerCell.props}
-      className={className}
-      scope="col"
-      aria-sort={sortDirection}
-      style={style}
-    >
-      {columnHeadingContent}
-    </th>
-  ) : (
-    <th className={className} scope="row" style={style}>
-      {content}
-    </th>
-  );
+    if (this.props.isDragOccurring) {
+      return;
+    }
 
-  const cellMarkup =
-    header || fixed ? (
-      headingMarkup
-    ) : (
-      <td className={className} style={style} onClick={onClick}>
-        {content}
-      </td>
+    // inline styles not applied
+    if (ref.style.width == null) {
+      return;
+    }
+
+    // no snapshot and drag is finished - clear the inline styles
+    ref.style.removeProperty('height');
+    ref.style.removeProperty('width');
+  }
+
+  render() {
+    const {
+      height,
+      content,
+      contentType,
+      fixed,
+      truncate,
+      header,
+      total,
+      footer,
+      sorted,
+      sortable,
+      sortDirection,
+      defaultSortDirection,
+      polaris: {
+        intl: {translate},
+      },
+      onSort,
+      onClick,
+    } = this.props;
+
+    const numeric = contentType === 'numeric';
+
+    const className = classNames(
+      styles.Cell,
+      fixed && styles['Cell-fixed'],
+      fixed && truncate && styles['Cell-truncated'],
+      header && styles['Cell-header'],
+      total && styles['Cell-total'],
+      footer && styles['Cell-footer'],
+      numeric && styles['Cell-numeric'],
+      sortable && styles['Cell-sortable'],
+      sorted && styles['Cell-sorted'],
     );
 
-  return cellMarkup;
+    const headerClassName = classNames(
+      header && styles.Heading,
+      header && contentType === 'text' && styles['Heading-left'],
+    );
+
+    const iconClassName = classNames(sortable && styles.Icon);
+
+    const style = {
+      height: height ? `${height}px` : undefined,
+    };
+
+    const direction = sorted ? sortDirection : defaultSortDirection;
+    const source = direction === 'ascending' ? CaretUpMinor : CaretDownMinor;
+    const oppositeDirection =
+      sortDirection === 'ascending' ? 'descending' : 'ascending';
+
+    const sortAccessibilityLabel = translate(
+      'Polaris.DataTable.sortAccessibilityLabel',
+      {direction: sorted ? oppositeDirection : direction},
+    );
+
+    const iconMarkup = (
+      <span className={iconClassName}>
+        <Icon source={source} accessibilityLabel={sortAccessibilityLabel} />
+      </span>
+    );
+
+    const sortableHeadingContent = (
+      <button className={headerClassName} onClick={onSort}>
+        {iconMarkup}
+        {content}
+      </button>
+    );
+
+    const columnHeadingContent = sortable ? sortableHeadingContent : content;
+
+    const headingMarkup = header ? (
+      <th
+        {...headerCell.props}
+        className={className}
+        scope="col"
+        aria-sort={sortDirection}
+        style={style}
+      >
+        {columnHeadingContent}
+      </th>
+    ) : (
+      <th className={className} scope="row" style={style}>
+        {content}
+      </th>
+    );
+
+    const cellMarkup =
+      header || fixed ? (
+        headingMarkup
+      ) : (
+        <td
+          ref={(ref) => {
+            this.tdRef = ref;
+          }}
+          className={className}
+          style={style}
+          onClick={onClick}
+        >
+          {content}
+        </td>
+      );
+
+    return cellMarkup;
+  }
 }
 
 export default withAppProvider<Props>()(Cell);
