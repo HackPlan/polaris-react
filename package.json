@@ -105,6 +105,7 @@
     "@storybook/addon-viewport": "5.1.1",
     "@storybook/react": "5.1.1",
     "@storybook/theming": "5.1.1",
+    "@types/classnames": "^2.2.8",
     "@types/enzyme": "^3.9.1",
     "@types/enzyme-adapter-react-16": "^1.0.5",
     "@types/lodash": "^4.14.108",
