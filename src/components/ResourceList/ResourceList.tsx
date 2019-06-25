@@ -90,7 +90,7 @@ export interface Props {
   /** Function to resolve an id from a item */
   resolveItemId?(item: any): string;
   /** items of ResourceList will be allowed to drag and drop if this prop specified */
-  onDragEnd(result: DropResult, provided: ResponderProvided): void;
+  onDragEnd?(result: DropResult, provided: ResponderProvided): void;
 }
 
 type CombinedProps = Props & WithAppProviderProps;
@@ -365,6 +365,10 @@ class ResourceList extends React.Component<CombinedProps, State> {
     }
   }
 
+  onDragEnd = (result: DropResult, provided: ResponderProvided) => {
+    this.props.onDragEnd && this.props.onDragEnd(result, provided);
+  };
+
   render() {
     const {
       items,
@@ -380,7 +384,6 @@ class ResourceList extends React.Component<CombinedProps, State> {
       resourceName = this.defaultResourceName,
       onSortChange,
       polaris: {intl},
-      onDragEnd,
     } = this.props;
     const {selectMode, loadingPosition, smallScreen} = this.state;
 
@@ -546,7 +549,7 @@ class ResourceList extends React.Component<CombinedProps, State> {
     );
 
     const listMarkup = this.itemsExist() ? (
-      <DragDropContext onDragEnd={onDragEnd}>
+      <DragDropContext onDragEnd={this.onDragEnd}>
         <ul
           className={resourceListClassName}
           ref={this.listRef}
