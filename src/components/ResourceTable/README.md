@@ -65,6 +65,68 @@ class ResourceTableExample extends React.Component {
 }
 ```
 
+### Resource table with drag and drop
+
+Use to present small amounts of data for merchants to view statically.
+
+```jsx
+class ResourceTableExample extends React.Component {
+  state = {
+    rows: [
+      ['Emerald Silk Gown', '$875.00', 124689, 140, '$122,500.00'],
+      ['Mauve Cashmere Scarf', '$230.00', 124533, 83, '$19,090.00'],
+      [
+        'Navy Merino Wool Blazer with khaki chinos and yellow belt',
+        '$445.00',
+        124518,
+        32,
+        '$14,240.00',
+      ],
+    ],
+  }
+
+  render() {
+    return (
+      <Page title="Sales by product">
+        <Card>
+          <ResourceTable
+            columnContentTypes={[
+              'text',
+              'numeric',
+              'numeric',
+              'numeric',
+              'numeric',
+            ]}
+            headings={[
+              'Product',
+              'Price',
+              'SKU Number',
+              'Net quantity',
+              'Net sales',
+            ]}
+            rows={this.state.rows}
+            totals={['', '', '', 255, '$155,830.00']}
+            onRowClicked={(index) => { console.log(index) }}
+            onDragEnd={(result) => {
+              // dropped outside the list
+              if (!result.destination) {
+                return;
+              }
+              const {rows} = this.state;
+              rows.splice(result.destination.index, 0, rows.splice(result.source.index, 1)[0]);
+
+              this.setState({
+                rows
+              });
+            }}
+          />
+        </Card>
+      </Page>
+    );
+  }
+}
+```
+
 ### Sortable resource table
 
 Use when clarity of the table’s content is needed. For example, to note the number of rows currently shown in a resource table with pagination.
