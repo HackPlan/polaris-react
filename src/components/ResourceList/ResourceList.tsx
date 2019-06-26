@@ -653,13 +653,27 @@ class ResourceList extends React.Component<CombinedProps, State> {
         index={index}
         key={id}
       >
-        {(provided) => {
+        {(provided, snapshot) => {
+          const draggableStyle = provided.draggableProps.style;
+          const transform = draggableStyle ? draggableStyle.transform : null;
           return (
             <li
               ref={provided.innerRef}
-              className={styles.ItemWrapper}
+              className={classNames(
+                styles.ItemWrapper,
+                snapshot.isDragging ? styles.IsDragging : '',
+              )}
               {...provided.draggableProps}
               {...provided.dragHandleProps}
+              style={{
+                ...provided.draggableProps.style,
+                ...(transform && {
+                  transform: `translate(0, ${transform.substring(
+                    transform.indexOf(',') + 1,
+                    transform.indexOf(')'),
+                  )})`,
+                }),
+              }}
             >
               {renderItem(item, id, index)}
             </li>

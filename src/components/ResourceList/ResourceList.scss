@@ -206,6 +206,11 @@ $item-wrapper-loading-height: rem(64px);
   }
 }
 
+.IsDragging {
+  border: none !important;
+  background-color: white;
+}
+
 .ItemWrapper-isLoading {
   min-height: $item-wrapper-loading-height;
 }
