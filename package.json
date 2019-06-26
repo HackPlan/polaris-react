@@ -1,7 +1,7 @@
 {
   "name": "@hackplan/polaris",
   "description": "Shopify’s product component library",
-  "version": "4.1.4",
+  "version": "4.1.5",
   "private": false,
   "license": "SEE LICENSE IN LICENSE.md",
   "author": "Shopify <dev@shopify.com>",
@@ -105,10 +105,12 @@
     "@storybook/addon-viewport": "5.1.1",
     "@storybook/react": "5.1.1",
     "@storybook/theming": "5.1.1",
+    "@types/classnames": "^2.2.8",
     "@types/enzyme": "^3.9.1",
     "@types/enzyme-adapter-react-16": "^1.0.5",
     "@types/lodash": "^4.14.108",
     "@types/node": "^11.13.8",
+    "@types/react-beautiful-dnd": "^11.0.2",
     "archiver": "^3.0.0",
     "aws-sdk": "^2.58.0",
     "babel-core": "7.0.0-bridge.0",
@@ -189,6 +191,7 @@
     "@types/react-transition-group": "^2.0.7",
     "hoist-non-react-statics": "^2.5.0",
     "lodash": "^4.17.4",
+    "react-beautiful-dnd": "^11.0.4",
     "react-transition-group": "^2.4.0",
     "tslib": "^1.9.3"
   }
