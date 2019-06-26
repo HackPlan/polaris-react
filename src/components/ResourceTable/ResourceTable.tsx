@@ -808,18 +808,30 @@ export class ResourceTable extends React.PureComponent<
         index={index}
         key={draggableId}
       >
-        {(provided) => {
+        {(provided, snapshot) => {
+          const draggableStyle = provided.draggableProps.style;
+          const transform = draggableStyle ? draggableStyle.transform : null;
           return (
             <tr
               ref={provided.innerRef}
               key={`row-${index}`}
-              className={[
+              className={classNames(
                 className,
                 tableRowClickableClassName,
                 tableRowSelectableClassName,
-              ].join(' ')}
+                snapshot.isDragging ? styles.IsDragging : '',
+              )}
               {...provided.draggableProps}
               {...provided.dragHandleProps}
+              style={{
+                ...provided.draggableProps.style,
+                ...(transform && {
+                  transform: `translate(0, ${transform.substring(
+                    transform.indexOf(',') + 1,
+                    transform.indexOf(')'),
+                  )})`,
+                }),
+              }}
             >
               <IsDraggingContext.Consumer>
                 {(isDragging: boolean) => {
