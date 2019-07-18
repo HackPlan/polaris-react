@@ -98,6 +98,23 @@ $breakpoint: 768px;
   text-align: left;
   transition: background-color 0.2s ease-in-out;
   vertical-align: middle;
+
+  &.SelectionCell {
+    padding-left: 1.4rem !important;
+    padding-right: 0 !important;
+    width: 46px !important;
+  }
+}
+
+.SelectionCell {
+  padding: 0;
+  border-bottom: border-width() solid color('sky', 'light');
+  white-space: nowrap;
+  text-align: left;
+  transition: background-color 0.2s ease-in-out;
+  vertical-align: middle;
+
+  width: 42px !important;
 }
 
 .Cell-numeric {

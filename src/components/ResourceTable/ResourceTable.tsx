@@ -222,11 +222,13 @@ export class ResourceTable extends React.PureComponent<
         }
       };
       return (
-        <Checkbox
-          label=""
-          checked={selectedIndexes && selectedIndexes.includes(rowIndex)}
-          onChange={handleOnChange}
-        />
+        <div style={{marginLeft: 17, width: 10}}>
+          <Checkbox
+            label=""
+            checked={selectedIndexes && selectedIndexes.includes(rowIndex)}
+            onChange={handleOnChange}
+          />
+        </div>
       );
     };
 
@@ -782,6 +784,7 @@ export class ResourceTable extends React.PureComponent<
       onRowClicked,
       selectedIndexes = [],
       onDragEnd,
+      onSelection,
     } = this.props;
     const {heights} = this.state;
     const bodyCellHeights = totals ? heights.slice(2) : heights.slice(1);
@@ -840,6 +843,7 @@ export class ResourceTable extends React.PureComponent<
                       const id = `cell-${cellIndex}-row-${index}`;
                       return (
                         <Cell
+                          isSelection={cellIndex === 0 && Boolean(onSelection)}
                           key={id}
                           testID={id}
                           height={bodyCellHeights[index]}

@@ -28,6 +28,7 @@ export interface Props {
     event: React.MouseEvent<HTMLTableDataCellElement, MouseEvent>,
   ) => void;
   isDragOccurring?: boolean;
+  isSelection?: boolean;
 }
 
 export type CombinedProps = Props & WithAppProviderProps;
@@ -111,12 +112,13 @@ export class Cell extends React.Component<CombinedProps, State, Snapshot> {
       },
       onSort,
       onClick,
+      isSelection,
     } = this.props;
 
     const numeric = contentType === 'numeric';
 
     const className = classNames(
-      styles.Cell,
+      isSelection ? styles.SelectionCell : styles.Cell,
       fixed && styles['Cell-fixed'],
       fixed && truncate && styles['Cell-truncated'],
       header && styles['Cell-header'],
