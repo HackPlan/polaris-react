@@ -1,4 +1,5 @@
-import React from 'react';
+import React, {useMemo} from 'react';
+import range from 'lodash/range';
 import {ArrowLeftMinor, ArrowRightMinor} from '@shopify/polaris-icons';
 import {classNames} from '../../utilities/css';
 import isInputFocused from '../../utilities/isInputFocused';
@@ -35,6 +36,12 @@ export interface PaginationDescriptor {
   onNext?(): void;
   /** Callback when previous button is clicked */
   onPrevious?(): void;
+  /** Current page */
+  currentPage?: number;
+  /** Total page */
+  totalPage?: number;
+  /** Callback when page number button is clicked */
+  onPageChange?(page: number): void;
 }
 
 export interface Props extends PaginationDescriptor {
@@ -58,6 +65,9 @@ function Pagination({
   plain,
   accessibilityLabel,
   polaris: {intl},
+  currentPage,
+  totalPage,
+  onPageChange,
 }: CombinedProps) {
   const node: React.RefObject<HTMLElement> = React.createRef();
   let label: string;
@@ -70,6 +80,10 @@ function Pagination({
 
   const className = classNames(styles.Pagination, plain && styles.plain);
   const previousClassName = classNames(styles.Button, styles.PreviousButton);
+  const pageNumbersClassName = classNames(
+    styles.Button,
+    styles.PageNumberButton,
+  );
   const nextClassName = classNames(styles.Button, styles.NextButton);
 
   const previousButton = previousURL ? (
@@ -162,10 +176,102 @@ function Pagination({
       />
     ));
 
+  const PageNumberButton = (props: {
+    key?: number;
+    title: string;
+    nonInteractive?: boolean;
+    selected?: boolean;
+    onClick?: () => void;
+  }) => {
+    const className = [
+      pageNumbersClassName,
+      ...(props.nonInteractive ? [styles.NonInteractive] : []),
+      ...(props.selected ? [styles.Selected] : []),
+    ].join(' ');
+    return (
+      <button
+        onClick={() => {
+          !props.nonInteractive && props.onClick && props.onClick();
+        }}
+        type="button"
+        onMouseUp={handleMouseUpByBlurring}
+        className={className}
+        aria-label={intl.translate('Polaris.Pagination.previous')}
+      >
+        {props.title}
+      </button>
+    );
+  };
+
+  const pageNumbersMarkup = useMemo(
+    () => {
+      if (!currentPage || !totalPage || currentPage > totalPage) return null;
+
+      const maxShowPageNumberLength = 5;
+      const pageNumberData: {
+        title: string;
+        nonInteractive: boolean;
+        selected: boolean;
+      }[] = range(1, totalPage + 1).map((i) => ({
+        title: String(i),
+        nonInteractive: false,
+        selected: false,
+      }));
+
+      const leftHideLength = currentPage - 4 < 0 ? 0 : currentPage - 4;
+      const leftShowLength = (currentPage > 4 ? 3 : currentPage) - 1;
+      const rightShowLength = maxShowPageNumberLength - leftShowLength - 1;
+      const rightHideLength = totalPage - currentPage - rightShowLength - 1;
+
+      if (rightHideLength > 0) {
+        pageNumberData.splice(currentPage + rightShowLength, rightHideLength);
+        pageNumberData.splice(pageNumberData.length - 1, 0, {
+          title: '...',
+          nonInteractive: true,
+          selected: false,
+        });
+      }
+      if (leftHideLength > 0) {
+        pageNumberData.splice(1, leftHideLength);
+        pageNumberData.splice(1, 0, {
+          title: '...',
+          nonInteractive: true,
+          selected: false,
+        });
+      }
+      const selectedPageNumber = pageNumberData.find(
+        (i) => i.title === String(currentPage),
+      );
+      if (selectedPageNumber) {
+        if (pageNumberData.length > 1) {
+          selectedPageNumber.selected = true;
+        } else {
+          selectedPageNumber.nonInteractive = true;
+        }
+      }
+
+      return (
+        <React.Fragment>
+          {pageNumberData.map((i, index) => (
+            <PageNumberButton
+              key={index}
+              {...i}
+              onClick={() => {
+                onPageChange && onPageChange(Number(i.title));
+              }}
+            />
+          ))}
+        </React.Fragment>
+      );
+    },
+    [currentPage, totalPage, onPageChange],
+  );
+
   return (
     <nav className={className} aria-label={label} ref={node}>
       {previousButtonEvents}
       {constructedPrevious}
+      {pageNumbersMarkup}
       {nextButtonEvents}
       {constructedNext}
     </nav>

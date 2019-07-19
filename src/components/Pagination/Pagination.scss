@@ -164,3 +164,41 @@ $stacking-order: (
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
 }
+
+.PageNumberButton {
+  margin-left: -1px;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+
+  min-width: 2.5rem;
+
+  vertical-align: middle;
+
+  &.NonInteractive {
+    cursor: default;
+
+    &:hover {
+      background: linear-gradient(to bottom, white, #f9fafb);
+    }
+    &:active {
+      background: linear-gradient(to bottom, white, #f9fafb);
+      border: border(dark);
+      box-shadow: none;
+    }
+    &:focus {
+      border: border(dark);
+      box-shadow: none;
+    }
+  }
+
+  &.Selected {
+    border: border(dark);
+    border-color: color('indigo');
+    box-shadow: 0 0 0 1px color('indigo');
+    margin-top: 1px;
+    margin-bottom: 1px;
+    z-index: 21;
+  }
+}
