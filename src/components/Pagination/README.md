@@ -96,6 +96,40 @@ Attach standard keyboard shortcuts to important pagination controls.
 </div>
 ```
 
+### Default pagination with page numbers
+
+<!-- example-for: web -->
+
+Use for pagination at the bottom of lists.
+
+```jsx
+class PaginationNumberDemo extends React.Component {
+  state = {
+    currentPage: 4,
+    totalPage: 10,
+  }
+
+  render() {
+    return (
+      <Pagination
+        hasPrevious={this.state.currentPage > 1}
+        onPrevious={() => {
+          this.setState((prevState) => ({ currentPage: prevState.currentPage-1 }))
+        }}
+        hasNext={this.state.currentPage < this.state.totalPage}
+        onNext={() => {
+          this.setState((prevState) => ({ currentPage: prevState.currentPage+1 }))
+        }}
+        currentPage={this.state.currentPage}
+        totalPage={this.state.totalPage}
+        onPageChange={(page) => { console.log(page); this.setState({ currentPage: page }) }}
+      />
+    )
+  }
+}
+
+```
+
 ### Infinite scroll
 
 <!-- example-for: ios, android -->
