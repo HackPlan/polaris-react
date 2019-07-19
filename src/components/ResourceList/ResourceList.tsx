@@ -470,44 +470,42 @@ class ResourceList extends React.Component<CombinedProps, State> {
 
     const showEmptyState = filterControl && !this.itemsExist() && !loading;
 
-    const headerMarkup = !showEmptyState &&
-      (showHeader || needsHeader) &&
-      this.listRef.current && (
-        <div className={styles.HeaderOuterWrapper}>
-          <Sticky boundingElement={this.listRef.current}>
-            {(isSticky: boolean) => {
-              const headerClassName = classNames(
-                styles.HeaderWrapper,
-                sortOptions &&
-                  sortOptions.length > 0 &&
-                  !alternateTool &&
-                  styles['HeaderWrapper-hasSort'],
-                alternateTool && styles['HeaderWrapper-hasAlternateTool'],
-                this.selectable && styles['HeaderWrapper-hasSelect'],
-                loading && styles['HeaderWrapper-disabled'],
-                this.selectable &&
-                  selectMode &&
-                  styles['HeaderWrapper-inSelectMode'],
-                isSticky && styles['HeaderWrapper-isSticky'],
-              );
-              return (
-                <div className={headerClassName} testID="ResourceList-Header">
-                  <EventListener event="resize" handler={this.handleResize} />
-                  {headerWrapperOverlay}
-                  <div className={styles.HeaderContentWrapper}>
-                    {headerTitleMarkup}
-                    {checkableButtonMarkup}
-                    {alternateToolMarkup}
-                    {sortingSelectMarkup}
-                    {selectButtonMarkup}
-                  </div>
-                  {bulkActionsMarkup}
+    const headerMarkup = !showEmptyState && (
+      <div className={styles.HeaderOuterWrapper}>
+        <Sticky boundingElement={this.listRef.current}>
+          {(isSticky: boolean) => {
+            const headerClassName = classNames(
+              styles.HeaderWrapper,
+              sortOptions &&
+                sortOptions.length > 0 &&
+                !alternateTool &&
+                styles['HeaderWrapper-hasSort'],
+              alternateTool && styles['HeaderWrapper-hasAlternateTool'],
+              this.selectable && styles['HeaderWrapper-hasSelect'],
+              loading && styles['HeaderWrapper-disabled'],
+              this.selectable &&
+                selectMode &&
+                styles['HeaderWrapper-inSelectMode'],
+              isSticky && styles['HeaderWrapper-isSticky'],
+            );
+            return (
+              <div className={headerClassName} testID="ResourceList-Header">
+                <EventListener event="resize" handler={this.handleResize} />
+                {headerWrapperOverlay}
+                <div className={styles.HeaderContentWrapper}>
+                  {headerTitleMarkup}
+                  {checkableButtonMarkup}
+                  {alternateToolMarkup}
+                  {sortingSelectMarkup}
+                  {selectButtonMarkup}
                 </div>
-              );
-            }}
-          </Sticky>
-        </div>
-      );
+                {bulkActionsMarkup}
+              </div>
+            );
+          }}
+        </Sticky>
+      </div>
+    );
 
     const emptyStateMarkup = showEmptyState ? (
       <div className={styles.EmptySearchResultWrapper}>
