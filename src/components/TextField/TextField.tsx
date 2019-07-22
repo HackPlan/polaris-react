@@ -109,6 +109,8 @@ export interface BaseProps {
   ariaAutocomplete?: string;
   /** Indicates whether or not the character count should be displayed */
   showCharacterCount?: boolean;
+  /** Indicates whether or not show spinner */
+  hideSpinner?: boolean;
   /** Determines the alignment of the text in the input */
   align?: Alignment;
   /** Callback when clear button is clicked */
@@ -206,6 +208,7 @@ class TextField extends React.PureComponent<CombinedProps, State> {
       readOnly,
       role,
       showCharacterCount,
+      hideSpinner,
       spellCheck,
       step,
       suffix,
@@ -286,7 +289,7 @@ class TextField extends React.PureComponent<CombinedProps, State> {
       ) : null;
 
     const spinnerMarkup =
-      type === 'number' && !disabled && !readOnly ? (
+      type === 'number' && !hideSpinner && !disabled && !readOnly ? (
         <Spinner
           onChange={this.handleNumberChange}
           onMouseDown={this.handleButtonPress}

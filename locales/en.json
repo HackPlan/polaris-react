@@ -141,7 +141,9 @@
     "Pagination": {
       "previous": "Previous",
       "next": "Next",
-      "pagination": "Pagination"
+      "pagination": "Pagination",
+      "gotoPageLeft": "Goto",
+      "gotoPageRight": ""
     },
 
     "ProgressBar": {

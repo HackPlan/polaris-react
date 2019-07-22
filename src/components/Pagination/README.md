@@ -123,6 +123,7 @@ class PaginationNumberDemo extends React.Component {
         currentPage={this.state.currentPage}
         totalPage={this.state.totalPage}
         onPageChange={(page) => { console.log(page); this.setState({ currentPage: page }) }}
+        showGotoPageButton
       />
     )
   }
