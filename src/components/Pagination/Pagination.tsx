@@ -1,6 +1,7 @@
-import React, {useMemo} from 'react';
+import React, {useMemo, useState, useEffect} from 'react';
 import range from 'lodash/range';
 import {ArrowLeftMinor, ArrowRightMinor} from '@shopify/polaris-icons';
+import TextField from '../TextField';
 import {classNames} from '../../utilities/css';
 import isInputFocused from '../../utilities/isInputFocused';
 import {withAppProvider, WithAppProviderProps} from '../AppProvider';
@@ -42,6 +43,8 @@ export interface PaginationDescriptor {
   totalPage?: number;
   /** Callback when page number button is clicked */
   onPageChange?(page: number): void;
+  /** Indicates whether or not display goto page button */
+  showGotoPageButton?: boolean;
 }
 
 export interface Props extends PaginationDescriptor {
@@ -68,9 +71,18 @@ function Pagination({
   currentPage,
   totalPage,
   onPageChange,
+  showGotoPageButton,
 }: CombinedProps) {
   const node: React.RefObject<HTMLElement> = React.createRef();
   let label: string;
+
+  const [gotoPage, setGotoPage] = useState<number | undefined>(currentPage);
+  useEffect(
+    () => {
+      setGotoPage(currentPage);
+    },
+    [currentPage],
+  );
 
   if (accessibilityLabel) {
     label = accessibilityLabel;
@@ -267,6 +279,67 @@ function Pagination({
     [currentPage, totalPage, onPageChange],
   );
 
+  const gotoPageButtonMarkup = useMemo(
+    () => {
+      const gotoPageTitleLeft = intl.translate(
+        'Polaris.Pagination.gotoPageLeft',
+      );
+      const gotoPageTitleRight = intl.translate(
+        'Polaris.Pagination.gotoPageRight',
+      );
+
+      return (
+        showGotoPageButton &&
+        currentPage !== undefined &&
+        totalPage !== undefined &&
+        onPageChange !== undefined &&
+        gotoPage !== undefined && (
+          <div className={styles.GoToPageContainer}>
+            <PageNumberButton title={gotoPageTitleLeft} nonInteractive />
+            <div
+              className={styles.GoToPageButton}
+              onKeyPress={(event) => {
+                if (event.key === 'Enter') {
+                  const page = Math.max(1, Math.min(totalPage, gotoPage));
+                  onPageChange(page);
+                  setGotoPage(page);
+                }
+              }}
+            >
+              <TextField
+                label=""
+                labelHidden
+                align="center"
+                type="number"
+                min={1}
+                max={totalPage}
+                value={String(gotoPage)}
+                onChange={(value) => {
+                  const page = parseInt(value, 10);
+                  if (!isNaN(page)) {
+                    setGotoPage(page);
+                  } else {
+                    setGotoPage(undefined);
+                  }
+                }}
+                onBlur={() => {
+                  const page = Math.max(1, Math.min(totalPage, gotoPage));
+                  onPageChange(page);
+                  setGotoPage(page);
+                }}
+                hideSpinner
+              />
+            </div>
+            {gotoPageTitleRight !== '' && (
+              <PageNumberButton title=" 页" nonInteractive />
+            )}
+          </div>
+        )
+      );
+    },
+    [showGotoPageButton, currentPage, totalPage, onPageChange, gotoPage, intl],
+  );
+
   return (
     <nav className={className} aria-label={label} ref={node}>
       {previousButtonEvents}
@@ -274,6 +347,8 @@ function Pagination({
       {pageNumbersMarkup}
       {nextButtonEvents}
       {constructedNext}
+
+      {gotoPageButtonMarkup}
     </nav>
   );
 }
