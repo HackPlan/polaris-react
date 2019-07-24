@@ -76,6 +76,26 @@ Used most in the interface. Only use another style if a button requires more or 
 
 <!-- /content-for -->
 
+### Circle button
+
+Used most in the interface. Only use another style if a button requires more or less visual weight.
+
+```jsx
+<Button primary circle width={60} height={60} icon>Add</Button>
+```
+
+<!-- content-for: android -->
+
+![Basic button for Android](/public_images/components/Button/android/basic@2x.png)
+
+<!-- /content-for -->
+
+<!-- content-for: ios -->
+
+![Basic button for iOS](/public_images/components/Button/ios/basic@2x.png)
+
+<!-- /content-for -->
+
 ### Outline button
 
 <!-- example-for: web -->

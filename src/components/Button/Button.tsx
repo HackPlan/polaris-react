@@ -45,6 +45,12 @@ export interface Props {
   disclosure?: boolean;
   /** Allows the button to submit a form */
   submit?: boolean;
+  /** Renders a circle button */
+  circle?: boolean;
+  /** Indicates width of the button */
+  width?: number;
+  /** Indicates height of the button */
+  height?: number;
   /** Renders a button that looks like a link */
   plain?: boolean;
   /** Makes `plain` and `outline` Button colors (text, borders, icons) the same as the current text color. Also adds an underline to `plain` Buttons */
@@ -108,6 +114,9 @@ export default function Button({
   size = DEFAULT_SIZE,
   textAlign,
   fullWidth,
+  circle,
+  width,
+  height,
 }: Props) {
   const intl = useI18n();
 
@@ -225,6 +234,15 @@ export default function Button({
       aria-pressed={ariaPressed}
       role={loading ? 'alert' : undefined}
       aria-busy={loading ? true : undefined}
+      style={
+        circle
+          ? {
+              borderRadius: '50%',
+              width,
+              height,
+            }
+          : {}
+      }
     >
       {content}
     </button>
