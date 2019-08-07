@@ -843,11 +843,19 @@ export class ResourceTable extends React.PureComponent<
                           content={content}
                           contentType={this.injectColumnContentTypes[cellIndex]}
                           truncate={truncate}
-                          onClick={() => {
+                          onClick={(event) => {
+                            // prevent selection triggered event
                             if (this.props.selectable && cellIndex === 0) {
                               return;
                             }
-                            onRowClicked && onRowClicked(index);
+
+                            // prevent bubble triggered event
+                            if (
+                              (event.target as any).nodeName.toLowerCase() ===
+                              'td'
+                            ) {
+                              onRowClicked && onRowClicked(index);
+                            }
                           }}
                           isDragOccurring={isDragging}
                         />
