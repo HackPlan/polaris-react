@@ -24,6 +24,7 @@ Use to present small amounts of data for merchants to view statically.
 ```jsx
 class ResourceTableExample extends React.Component {
   render() {
+    const rowIds = ['row1', 'row2', 'row3'];
     const rows = [
       ['Emerald Silk Gown', '$875.00', 124689, 140, '$122,500.00'],
       ['Mauve Cashmere Scarf', '$230.00', 124533, 83, '$19,090.00'],
@@ -54,6 +55,61 @@ class ResourceTableExample extends React.Component {
               'Net quantity',
               'Net sales',
             ]}
+            rowIds={rowIds}
+            rows={rows}
+            totals={['', '', '', 255, '$155,830.00']}
+            onRowClicked={(index) => { console.log(index) }}
+          />
+        </Card>
+      </Page>
+    );
+  }
+}
+```
+
+### Default resource table with input
+
+Use to present small amounts of data for merchants to view statically.
+
+```jsx
+class ResourceTableExample extends React.Component {
+  state = {
+    input: ''
+  }
+
+  render() {
+    const rowIds = ['row1', 'row2', 'row3'];
+    const rows = [
+      ['Emerald Silk Gown', '$875.00', 124689, 140, '$122,500.00'],
+      ['Mauve Cashmere Scarf', '$230.00', 124533, 83, '$19,090.00'],
+      [
+        'Navy Merino Wool Blazer with khaki chinos and yellow belt',
+        '$445.00',
+        124518,
+        32,
+        <TextField value={this.state.input} onChange={(value) => this.setState({ input: value }) } />
+      ],
+    ];
+
+    return (
+      <Page title="Sales by product">
+        <Card>
+          <ResourceTable
+            columnContentTypes={[
+              'text',
+              'numeric',
+              'numeric',
+              'numeric',
+              'numeric',
+            ]}
+            headings={[
+              'Product',
+              'Price',
+              'SKU Number',
+              'Net quantity',
+              'Net sales',
+            ]}
+            rowIds={rowIds}
             rows={rows}
             totals={['', '', '', 255, '$155,830.00']}
             onRowClicked={(index) => { console.log(index) }}
@@ -72,6 +128,7 @@ Use to present small amounts of data for merchants to view statically.
 ```jsx
 class ResourceTableExample extends React.Component {
   state = {
+    rowIds: ['row1', 'row2', 'row3'],
     rows: [
       ['Emerald Silk Gown', '$875.00', 124689, 140, '$122,500.00'],
       ['Mauve Cashmere Scarf', '$230.00', 124533, 83, '$19,090.00'],
@@ -104,6 +161,7 @@ class ResourceTableExample extends React.Component {
               'Net quantity',
               'Net sales',
             ]}
+            rowIds={this.state.rowIds}
             rows={this.state.rows}
             totals={['', '', '', 255, '$155,830.00']}
             onRowClicked={(index) => { console.log(index) }}
@@ -152,6 +210,7 @@ class SortableResourceTableExample extends React.Component {
 
   render() {
     const {sortedRows} = this.state;
+    const rowIds = ['row1', 'row2', 'row3'];
     const initiallySortedRows = [
       ['Emerald Silk Gown', '$875.00', 124689, 140, '$122,500.00'],
       ['Mauve Cashmere Scarf', '$230.00', 124533, 83, '$19,090.00'],
@@ -183,6 +242,7 @@ class SortableResourceTableExample extends React.Component {
               'Net quantity',
               'Net sales',
             ]}
+            rowIds={rowIds}
             rows={rows}
             totals={['', '', '', 255, '$155,830.00']}
             sortable={[false, true, false, false, true]}
@@ -204,6 +264,7 @@ Use when clarity of the table’s content is needed. For example, to note the nu
 ```jsx
 class ResourceTableFooterExample extends React.Component {
   render() {
+    const rowIds = ['row1', 'row2', 'row3'];
     const rows = [
       ['Emerald Silk Gown', '$875.00', 124689, 140, '$122,500.00'],
       ['Mauve Cashmere Scarf', '$230.00', 124533, 83, '$19,090.00'],
@@ -234,6 +295,7 @@ class ResourceTableFooterExample extends React.Component {
               'Net quantity',
               'Net sales',
             ]}
+            rowIds={rowIds}
             rows={rows}
             totals={['', '', '', 255, '$155,830.00']}
             footerContent={`Showing ${rows.length} of ${rows.length} results`}
@@ -252,6 +314,7 @@ Use to help merchants find relevant, finer grained data sets.
 ```jsx
 class ResourceTableLinkExample extends React.Component {
   render() {
+    const rowIds = ['row1', 'row2', 'row3'];
     const rows = [
       [
         <Link url="https://www.example.com">Emerald Silk Gown</Link>,
@@ -296,6 +359,7 @@ class ResourceTableLinkExample extends React.Component {
               'Quantity',
               'Net sales',
             ]}
+            rowIds={rowIds}
             rows={rows}
             totals={['', '', '', 255, '$155,830.00']}
           />
@@ -331,7 +395,7 @@ class FullResourceTableExample extends React.Component {
 
   render() {
     const {sortedRows} = this.state;
-
+    const rowIds = ['row1', 'row2', 'row3'];
     const initiallySortedRows = [
       [
         <Link url="https://www.example.com">Emerald Silk Gown</Link>,
@@ -378,6 +442,7 @@ class FullResourceTableExample extends React.Component {
               'Net quantity',
               'Net sales',
             ]}
+            rowIds={rowIds}
             rows={rows}
             totals={['', '', '', 255, '$155,830.00']}
             sortable={[false, true, false, false, true]}
@@ -400,6 +465,7 @@ Use to present small amounts of data for merchants to view statically.
 ```jsx
 class ResourceTableExample extends React.Component {
   render() {
+    const rowIds = ['row1', 'row2', 'row3'];
     const rows = [
       ['Emerald Silk Gown', '$875.00', 124689, 140, '$122,500.00'],
       ['Mauve Cashmere Scarf', '$230.00', 124533, 83, '$19,090.00'],
@@ -431,6 +497,7 @@ class ResourceTableExample extends React.Component {
               'Net quantity',
               'Net sales',
             ]}
+            rowIds={rowIds}
             rows={rows}
             totals={['', '', '', 255, '$155,830.00']}
           />
@@ -448,6 +515,7 @@ Use to present small amounts of data for merchants to view statically.
 ```jsx
 class ResourceTableExample extends React.Component {
   render() {
+    const rowIds = [];
     const rows = [
     ];
 
@@ -469,6 +537,7 @@ class ResourceTableExample extends React.Component {
               'Net quantity',
               'Net sales',
             ]}
+            rowIds={rowIds}
             rows={rows}
           />
         </Card>
@@ -486,6 +555,7 @@ Use to present small amounts of data for merchants to view statically.
 class ResourceTableExample extends React.Component {
   state = {
     selectedIndexes: [],
+    rowIds: ['row1', 'row2', 'row3'],
     rows: [
       ['Emerald Silk Gown', '$875.00', 124689, 140, '$122,500.00', <Button size="slim" primary>Button</Button>],
       ['Mauve Cashmere Scarf', '$230.00', 124533, 83, '$19,090.00', <Button size="slim" primary>Button</Button>],
@@ -528,6 +598,7 @@ class ResourceTableExample extends React.Component {
               'Net sales',
               'Actions',
             ]}
+            rowIds={this.state.rowIds}
             rows={this.state.rows}
             onRowClicked={(index) => { console.log(index) }}
             bulkActions={[

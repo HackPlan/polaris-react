@@ -24,7 +24,6 @@ export interface ResourceTableState {
   isScrolledFarthestLeft?: boolean;
   isScrolledFarthestRight?: boolean;
   isDragging: boolean;
-  rowIds: string[];
 }
 
 export const SELECT_ALL_ITEMS = 'All';
