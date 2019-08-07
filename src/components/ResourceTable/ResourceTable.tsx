@@ -45,6 +45,8 @@ export interface Props {
   headings: TableHeadingData[];
   /** List of numeric column totals, highlighted in the table’s header below column headings. Use empty strings as placeholders for columns with no total. */
   totals?: TableData[];
+  /** List of id of data rows */
+  rowIds: string[];
   /** Lists of data points which map to table body rows. */
   rows: TableData[][];
   /** Truncate content in first column instead of wrapping.
@@ -117,7 +119,6 @@ export class ResourceTable extends React.PureComponent<
     isScrolledFarthestLeft: true,
     isScrolledFarthestRight: false,
     isDragging: false,
-    rowIds: [],
   };
 
   private resourceTable = React.createRef<HTMLDivElement>();
@@ -165,7 +166,6 @@ export class ResourceTable extends React.PureComponent<
     } else {
       this.handleResize();
     }
-    this.generateRowIds();
   }
 
   componentDidUpdate(prevProps: Props) {
@@ -173,13 +173,6 @@ export class ResourceTable extends React.PureComponent<
       return;
     }
     this.handleResize();
-    this.generateRowIds();
-  }
-
-  generateRowIds() {
-    this.setState({
-      rowIds: this.props.rows.map(() => Math.random().toString()),
-    });
   }
 
   get injectColumnContentTypes() {
@@ -803,7 +796,7 @@ export class ResourceTable extends React.PureComponent<
       bodyCellHeights.pop();
     }
 
-    const draggableId = this.state.rowIds[index] || Math.random().toString();
+    const draggableId = this.props.rowIds[index] || Math.random().toString();
     return (
       <Draggable
         isDragDisabled={!onDragEnd}
