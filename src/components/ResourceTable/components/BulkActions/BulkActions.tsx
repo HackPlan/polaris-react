@@ -1,5 +1,5 @@
-import React from 'react';
-import {CSSTransition, Transition} from 'react-transition-group';
+import React, { createRef } from 'react';
+import {CSSTransition, Transition} from '@material-ui/react-transition-group';
 import debounce from 'lodash/debounce';
 import {durationBase} from '@shopify/polaris-tokens';
 import {classNames} from '../../../../utilities/css';
@@ -8,7 +8,10 @@ import ActionList from '../../../ActionList';
 import Popover from '../../../Popover';
 import Button from '../../../Button';
 import EventListener from '../../../EventListener';
-import {withAppProvider, WithAppProviderProps} from '../../../AppProvider';
+import {
+  withAppProvider,
+  WithAppProviderProps,
+} from '../../../../utilities/with-app-provider';
 import CheckableButton from '../CheckableButton';
 import {BulkActionButton} from './components';
 import styles from './BulkActions.scss';
@@ -73,6 +76,9 @@ export class BulkActions extends React.PureComponent<CombinedProps, State> {
   private containerNode: HTMLElement | null;
   private largeScreenButtonsNode: HTMLElement | null;
   private moreActionsNode: HTMLElement | null;
+  private checkableWrapperNode = createRef<HTMLDivElement>();
+  private largeScreenGroupNode = createRef<HTMLDivElement>();
+  private smallScreenGroupNode = createRef<HTMLDivElement>();
   private promotedActionsWidths: number[] = [];
   private bulkActionsWidth = 0;
   private addedMoreActionsWidthForMeasuring = 0;
@@ -357,7 +363,12 @@ export class BulkActions extends React.PureComponent<CombinedProps, State> {
     };
 
     const smallScreenGroup = (
-      <Transition timeout={0} in={selectMode} key="smallGroup">
+      <Transition
+        timeout={0}
+        in={selectMode}
+        key="smallGroup"
+        findDOMNode={this.findSmallScreenGroupNode}
+      >
         {(status: TransitionStatus) => {
           const smallScreenGroupClassName = classNames(
             styles.Group,
@@ -368,6 +379,7 @@ export class BulkActions extends React.PureComponent<CombinedProps, State> {
             <div className={smallScreenGroupClassName}>
               <div className={styles.ButtonGroup}>
                 <CSSTransition
+                  findDOMNode={this.findCheckableWrapperNode}
                   in={selectMode}
                   timeout={durationBase}
                   classNames={slideClasses}
@@ -386,7 +398,12 @@ export class BulkActions extends React.PureComponent<CombinedProps, State> {
     );
 
     const largeScreenGroup = (
-      <Transition timeout={0} in={selectMode} key="largeGroup">
+      <Transition
+        timeout={0}
+        in={selectMode}
+        key="largeGroup"
+        findDOMNode={this.findLargeScreenGroupNode}
+      >
         {(status: TransitionStatus) => {
           const largeScreenGroupClassName = classNames(
             styles.Group,
@@ -456,6 +473,18 @@ export class BulkActions extends React.PureComponent<CombinedProps, State> {
     if (measuring) {
       this.promotedActionsWidths.push(width);
     }
+  };
+
+  private findLargeScreenGroupNode = () => {
+    return this.largeScreenGroupNode.current;
+  };
+
+  private findCheckableWrapperNode = () => {
+    return this.checkableWrapperNode.current;
+  };
+
+  private findSmallScreenGroupNode = () => {
+    return this.smallScreenGroupNode.current;
   };
 }
 

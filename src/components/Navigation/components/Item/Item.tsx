@@ -231,14 +231,6 @@ export default function Item({
   const showExpanded = !iconOnly && selected || expanded || childIsActive;
   const showExpandedPopover = iconOnly && (selected || childIsActive);
 
-  const compoundItemClassName = classNames(
-    itemClassName,
-    styles.Item,
-    disabled && styles['Item-disabled'],
-    selected && (subNavigationItems.length === 0 || iconOnly) && styles['Item-selected'],
-    showExpanded && styles.subNavigationActive,
-  );
-
   let secondaryNavigationMarkup: ReactNode = null;
 
   const longestMatch = matchingSubNavigationItems.sort(

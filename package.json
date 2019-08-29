@@ -196,7 +196,6 @@
     "hoist-non-react-statics": "^3.3.0",
     "lodash": "^4.17.4",
     "react-beautiful-dnd": "^11.0.4",
-    "react-transition-group": "^2.4.0",
     "tslib": "^1.9.3"
   }
 }

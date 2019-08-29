@@ -376,7 +376,6 @@ class ResourceList extends React.Component<CombinedProps, State> {
       bulkActions,
       filterControl,
       loading,
-      showHeader = false,
       sortOptions,
       sortValue,
       alternateTool,
@@ -458,11 +457,6 @@ class ResourceList extends React.Component<CombinedProps, State> {
         />
       </div>
     ) : null;
-
-    const needsHeader =
-      this.selectable ||
-      (sortOptions && sortOptions.length > 0) ||
-      alternateTool;
 
     const headerWrapperOverlay = loading ? (
       <div className={styles['HeaderWrapper-overlay']} />
