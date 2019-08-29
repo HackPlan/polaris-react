@@ -91,6 +91,18 @@ export interface Props {
   resolveItemId?(item: any): string;
   /** items of ResourceList will be allowed to drag and drop if this prop specified */
   onDragEnd?(result: DropResult, provided: ResponderProvided): void;
+  /**
+   * Custom title of EmptyStateView
+   */
+  emptyTitle?: string
+  /**
+   * Custom description of EmptyStateView
+   */
+  emptyDescription?: string
+  /**
+   * Custom EmptyStateView shows when rows data is empty
+   */
+  emptyView?: JSX.Element
 }
 
 type CombinedProps = Props & WithAppProviderProps;
@@ -310,13 +322,15 @@ class ResourceList extends React.Component<CombinedProps, State> {
     const {
       polaris: {intl},
       resourceName = this.defaultResourceName,
+      emptyTitle,
+      emptyDescription,
     } = this.props;
 
     return {
-      title: intl.translate('Polaris.ResourceList.emptySearchResultTitle', {
+      title: emptyTitle || intl.translate('Polaris.ResourceList.emptySearchResultTitle', {
         resourceNamePlural: resourceName.plural,
       }),
-      description: intl.translate(
+      description: emptyDescription || intl.translate(
         'Polaris.ResourceList.emptySearchResultDescription',
       ),
     };
@@ -383,6 +397,7 @@ class ResourceList extends React.Component<CombinedProps, State> {
       resourceName = this.defaultResourceName,
       onSortChange,
       polaris: {intl},
+      emptyView,
     } = this.props;
     const {selectMode, loadingPosition, smallScreen} = this.state;
 
@@ -503,7 +518,9 @@ class ResourceList extends React.Component<CombinedProps, State> {
 
     const emptyStateMarkup = showEmptyState ? (
       <div className={styles.EmptySearchResultWrapper}>
-        <EmptySearchResult {...this.emptySearchResultText} withIllustration />
+        {emptyView || (
+          <EmptySearchResult {...this.emptySearchResultText} withIllustration />
+        )}
       </div>
     ) : null;
 

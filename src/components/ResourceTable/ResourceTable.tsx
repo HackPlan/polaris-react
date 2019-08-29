@@ -105,6 +105,18 @@ export interface Props {
    * items of ResourceList will be allowed to drag and drop if this prop specified
    */
   onDragEnd?(result: DropResult, provided: ResponderProvided): void;
+  /**
+   * Custom title of EmptyStateView
+   */
+  emptyTitle?: string
+  /**
+   * Custom description of EmptyStateView
+   */
+  emptyDescription?: string
+  /**
+   * Custom EmptyStateView shows when rows data is empty
+   */
+  emptyView?: JSX.Element
 }
 
 const IsDraggingContext = React.createContext<boolean>(false);
@@ -367,6 +379,9 @@ export class ResourceTable extends React.PureComponent<
       bulkActions,
       rows,
       headerNode,
+      emptyView,
+      emptyTitle,
+      emptyDescription,
     } = this.props;
 
     const {
@@ -483,10 +498,10 @@ export class ResourceTable extends React.PureComponent<
     const emptyResultMarkup = (
       <div style={{paddingTop: 60, paddingBottom: 60}}>
         <EmptySearchResult
-          title={intl.translate('Polaris.ResourceList.emptySearchResultTitle', {
+          title={emptyTitle || intl.translate('Polaris.ResourceList.emptySearchResultTitle', {
             resourceNamePlural: this.resourceName.plural,
           })}
-          description={intl.translate(
+          description={emptyDescription || intl.translate(
             'Polaris.ResourceList.emptySearchResultDescription',
           )}
           withIllustration
@@ -586,7 +601,7 @@ export class ResourceTable extends React.PureComponent<
                 </table>
               </DragDropContext>
             </IsDraggingContext.Provider>
-            {!loading && rows.length === 0 && emptyResultMarkup}
+            {!loading && rows.length === 0 && (emptyView || emptyResultMarkup)}
             {loading && rows.length === 0 && <div style={{height: 380}} />}
             {loading && loadingMarkup}
           </div>
