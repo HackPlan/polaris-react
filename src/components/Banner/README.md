@@ -268,6 +268,17 @@ including packaging.
 </Banner>
 ```
 
+### Default banners without icon
+
+- Use to convey general information or actions that aren’t critical. For example, you might show a banner that asks for merchant feedback.
+- Default banners contain lower priority information and should always be dismissible.
+
+```jsx
+<Banner title="Order archived" icon={null} onDismiss={() => {}}>
+  <p>This order was archived on March 7, 2017 at 3:12pm EDT.</p>
+</Banner>
+```
+
 <!-- content-for: android -->
 
 ![Default banner for Android](/public_images/components/Banner/android/default@2x.png)

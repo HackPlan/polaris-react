@@ -174,9 +174,11 @@ export default class Banner extends React.PureComponent<Props, never> {
                 aria-describedby={contentID}
               >
                 {dismissButton}
-                <div className={styles.Ribbon}>
-                  <Icon source={iconName} color={color} backdrop />
-                </div>
+                {icon !== null && (
+                  <div className={styles.Ribbon}>
+                    <Icon source={iconName} color={color} backdrop />
+                  </div>
+                )}
                 <div>
                   {headingMarkup}
                   {contentMarkup}

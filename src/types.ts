@@ -39,7 +39,8 @@ export type Color =
 export type IconSource =
   | React.SFC<React.SVGProps<SVGSVGElement>>
   | 'placeholder'
-  | string;
+  | string
+  | null;
 
 export interface IconProps {
   /** The SVG contents to display in the icon (icons should fit in a 20 × 20 pixel viewBox) */
