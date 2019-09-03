@@ -498,10 +498,10 @@ export class ResourceTable extends React.PureComponent<
     const emptyResultMarkup = (
       <div style={{paddingTop: 60, paddingBottom: 60}}>
         <EmptySearchResult
-          title={emptyTitle || intl.translate('Polaris.ResourceList.emptySearchResultTitle', {
+          title={emptyTitle !== undefined ? emptyTitle : intl.translate('Polaris.ResourceList.emptySearchResultTitle', {
             resourceNamePlural: this.resourceName.plural,
           })}
-          description={emptyDescription || intl.translate(
+          description={emptyDescription !== undefined ? emptyDescription : intl.translate(
             'Polaris.ResourceList.emptySearchResultDescription',
           )}
           withIllustration

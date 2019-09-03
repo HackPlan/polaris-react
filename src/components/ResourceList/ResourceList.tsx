@@ -327,10 +327,10 @@ class ResourceList extends React.Component<CombinedProps, State> {
     } = this.props;
 
     return {
-      title: emptyTitle || intl.translate('Polaris.ResourceList.emptySearchResultTitle', {
+      title: emptyTitle !== undefined ? emptyTitle : intl.translate('Polaris.ResourceList.emptySearchResultTitle', {
         resourceNamePlural: resourceName.plural,
       }),
-      description: emptyDescription || intl.translate(
+      description: emptyDescription !== undefined ? emptyDescription : intl.translate(
         'Polaris.ResourceList.emptySearchResultDescription',
       ),
     };
@@ -477,7 +477,7 @@ class ResourceList extends React.Component<CombinedProps, State> {
       <div className={styles['HeaderWrapper-overlay']} />
     ) : null;
 
-    const showEmptyState = filterControl && !this.itemsExist() && !loading;
+    const showEmptyState = !this.itemsExist() && !loading;
 
     const headerMarkup = !showEmptyState && (
       <div className={styles.HeaderOuterWrapper}>
